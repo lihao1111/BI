@@ -140,11 +140,10 @@
                                 :data="treeList"
                                 show-checkbox
                                 node-key="id"
-                                ref="authTree"
+                                ref="authUserTree"
                                 :props="defaultProps"
                                 highlight-current
-                                :default-expanded-keys="expendAuthData"
-                                :default-checked-keys="expendAuthData">
+                                :default-expanded-keys="expendAuthData">
                         </el-tree>
                     </el-scrollbar>
                 </el-form-item>
@@ -157,7 +156,7 @@
     </section>
 </template>
 <script>
-import { loadUserList, saveUser, deleteUser, loadUserAuth, authUserSubmit } from '../../api/api'
+import { loadUserList, saveUser, deleteUser, loadUserAuth, loadAnthTree, authUserSubmit } from '../../api/api'
 export default {
   data: function () {
     return {
@@ -179,8 +178,8 @@ export default {
       authUserName: '',
       chooseUserId: '',
       chooseUserType: '',
-      expendAuthData: '',
-      treeList: '',
+      expendAuthData: [],
+      treeList: [],
       defaultProps: { // 默认属性
         children: 'children',
         label: 'name'
@@ -229,18 +228,12 @@ export default {
           this.authUserName = row.realname
           this.chooseUserId = row.id
           this.chooseUserType = row.type
-          this.treeList = resultSet
-          this.expendAuthData = []
-          this.treeList.forEach(item => {
-            if (item.children) {
-              item.children.forEach(childrenItem => {
-                if (childrenItem.auth_code === '1') { // 已授权数据
-                  this.expendAuthData.push(parseInt(childrenItem.id))
-                }
-              })
-            }
-          })
+          this.expendAuthData = resultSet.map(item => item.id)
+          /* this.$nextTick(function () {
+            this.$refs.authUserTree.setCheckedKeys(this.expendAuthData)
+          }) */
           this.authFormVisible = true
+          this.$refs.authUserTree.setCheckedKeys(this.expendAuthData) // 采用这种方式进行checkedKey的赋值
         }
       })
     },
@@ -372,6 +365,19 @@ export default {
     this.tApp = JSON.parse(sessionStorage.getItem('tApp'))
     this.loginUser = JSON.parse(sessionStorage.getItem('user'))
     this.getUserMsg()
+    if (this.treeList.length === 0) { // 加载权限树
+      loadAnthTree().then(data => { // ?
+        let { businessCode, resultSet } = data
+        if (businessCode !== 'success') {
+          this.$message({
+            message: '权限树加载失败，请联系管理员！',
+            type: 'error'
+          })
+        } else {
+          this.treeList = resultSet
+        }
+      })
+    }
   },
   mounted: function () {
   },

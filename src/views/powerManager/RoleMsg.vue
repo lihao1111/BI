@@ -222,8 +222,9 @@ export default {
           this.editForm.id = resultSet[0].id
           this.editForm.name = resultSet[0].name
           this.editForm.description = resultSet[0].description
-          this.editForm.checkedList = resultSet[0].roleAuths // 该角色已有权限
           this.editFormVisible = true
+          this.editForm.checkedList = resultSet[0].roleAuths
+          this.$refs.authEditTree.setCheckedKeys(resultSet[0].roleAuths) // 采用这种方式进行checkedKey的赋值
         }
       })
     },

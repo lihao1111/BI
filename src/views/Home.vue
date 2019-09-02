@@ -29,7 +29,7 @@
         </el-dropdown>
       </el-col>-->
       <el-col :span="9">
-        <label style="color: #1d8ce0; font-size: 16px; font-weight:bold;">产品视图：</label>
+        <label style="color: #606266; font-size: 16px; font-weight:bold;">产品视图：</label>
         <el-cascader
             size="small"
             style="width:180px;"

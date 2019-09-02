@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-let base = '' // 生产环境配置  开发环境 使用代理转发 配置围 /api
+let base = '/api' // 生产环境配置  开发环境 使用代理转发 配置围 /api
 axios.defaults.timeout = 50000 // 响应时间
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8' // 请求头
 //  登录
