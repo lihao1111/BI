@@ -113,17 +113,10 @@ export default {
       this.seledVal = val
       this.drawPromotionChart()
     },
-    choosePage (pageId) {
-      let chooseItem = ''
-      this.pages.forEach(item => {
-        if (pageId === item.page_id) {
-          chooseItem = item
-          return false
-        }
-      })
+    choosePage () {
       // 加载数据
       if (this.choosePageId) {
-        this.pageUrl = 'http://img.wanyx.com/softImg/soft/1650_s.jpg' // 页面图片赋值
+        this.pageUrl = require('../../assets/demo001.jpg') // 页面图片赋值
         this.getPromotionList()
       }
     },

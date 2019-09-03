@@ -217,11 +217,14 @@ export default {
           this.tOrderList = resultSet // 表格数据
           // 整理图表数据
           this.orderList = []
+          this.allOrderNum = 0
+          this.allNewOrderNum = 0
+          this.allOldOrderNum = 0
+          this.allUnOrderNum = 0
           this.tOrderList.forEach(tItem => {
             this.allOrderNum += parseInt(tItem.ordered_num)
             this.allNewOrderNum += parseInt(tItem.newUordered_num)
             this.allOldOrderNum += parseInt(tItem.oldNewReUordered_num)
-            this.allOldOrderNum += parseInt(tItem.oldFirstUordered_num)
             this.allUnOrderNum += parseInt(tItem.unSubscribed_num)
 
             var existsItem = null
@@ -238,7 +241,8 @@ export default {
               existsItem['oldFirstUordered_num'] += parseInt(tItem['oldFirstUordered_num'])
               existsItem['unSubscribed_num'] += parseInt(tItem['unSubscribed_num'])
             } else {
-              this.orderList.push(tItem)
+              let copyItem = { ...tItem } // js 引用类型 以及 clone
+              this.orderList.push(copyItem)
             }
           })
           // 绘图
