@@ -101,6 +101,15 @@ export default new Router({
       ]
     },
     {
+      path: '/',
+      component: () => import('./views/Home.vue'),
+      name: '河北音乐支撑',
+      iconCls: 'el-icon-star-on', // 图标样式class
+      children: [
+        { path: 'hbMusicMsg', component: () => import('./views/hbMusicManager/HBMusicMsg.vue'), name: '推荐位详情', meta: { title: '河北音乐支撑', keepAlive: false } }
+      ]
+    },
+    {
       path: '*',
       hidden: true,
       redirect: { path: '/404' }

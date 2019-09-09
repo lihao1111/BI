@@ -32,9 +32,20 @@ export const loadCurOrder = params => {
     .then(res => res.data)
     .catch(function () { return { 'businessCode': 500 } })
 }
-
 export const loadOnlineErr = params => {
   return axios.post(`${base}/loadOnlineErr`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+// 加载 当日 pvuv
+export const loadDayPVUV = params => {
+  return axios.post(`${base}/loadDayPVUV`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+// 加载 日 使用时长
+export const loadDayUseTime = params => {
+  return axios.post(`${base}/loadDayUseTime`, qs.stringify(params))
     .then(res => res.data)
     .catch(function () { return { 'businessCode': 500 } })
 }
@@ -263,6 +274,17 @@ export const loadAuthList = params => {
 }
 export const BuildAuthentication = params => {
   return axios.post(`${base}/BuildAuthentication`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+// 河北数据支撑
+export const loadPromotionItemDtl = params => {
+  return axios.post(`${base}/loadPromotionItemDtl`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+export const exportPromotionItemDtl = params => {
+  return axios.post(`${base}/exportPromotionItemDtl`, qs.stringify(params))
     .then(res => res.data)
     .catch(function () { return { 'businessCode': 500 } })
 }

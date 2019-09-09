@@ -414,7 +414,7 @@ export default {
 
         .userinfo-inner {
           cursor: pointer;
-          color: #000000;
+          color: #606266;
           img {
             width: 40px;
             height: 40px;

@@ -95,9 +95,9 @@ export default {
   methods: {
     formaterText (row, column, cellValue) {
       var retVal = ''
-      if(cellValue == null || cellValue == 'null'){
-        retVal ='暂无'
-      }else{
+      if (cellValue === null || cellValue === 'null') {
+        retVal = '暂无'
+      } else {
         retVal = cellValue.toString()
       }
       return retVal
@@ -167,17 +167,17 @@ export default {
           this.drawDatas = []
           this.orderSourceList.forEach(orderSourceItem => {
             let item
-            this.drawDatas.forEach(drawItem =>{
-              if(orderSourceItem['ui'] === drawItem['ui']){
+            this.drawDatas.forEach(drawItem => {
+              if (orderSourceItem['ui'] === drawItem['ui']) {
                 item = drawItem
               }
             })
-            if(item){
+            if (item) {
               item['orderingPerUi_nums'] += parseInt(orderSourceItem['orderingPerUi_nums'])
               item['orderedPerUi_nums'] += parseInt(orderSourceItem['orderedPerUi_nums'])
-            }else{
-              let copyItem = {...orderSourceItem}   // js 引用类型 以及 clone
-              this.drawDatas.push(copyItem)
+            } else {
+              // let copyItem = {...orderSourceItem}   // js 引用类型 以及 clone
+              this.drawDatas.push(orderSourceItem)
             }
           })
           // 绘图
@@ -191,7 +191,7 @@ export default {
       var dataSerOrdering = []
       var dataSerOrdered = []
       this.drawDatas.sort(function (a, b) {
-        if(a['orderingPerUi_nums'] < b['orderingPerUi_nums']){   //按照  orderingPerUi_nums 正序排序
+        if (a['orderingPerUi_nums'] < b['orderingPerUi_nums']) { // 按照  orderingPerUi_nums 正序排序
           return 1
         }
       })
@@ -210,9 +210,9 @@ export default {
           data: dataLegStr
         },
         label: {
-          show: true, //开启显示
-          position: 'top', //在上方显示
-          textStyle: { //数值样式
+          show: true, // 开启显示
+          position: 'top', // 在上方显示
+          textStyle: { // 数值样式
             color: 'black',
             fontSize: 16,
             fontWeight: 600
