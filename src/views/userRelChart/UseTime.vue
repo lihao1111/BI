@@ -33,7 +33,7 @@
             导出数据
           </el-link>
         </el-col>
-        <el-table :data="useTimeList" highlight-current-row style="width:100%;"
+        <el-table :data="tUseTimeList" highlight-current-row style="width:100%;"
                   :header-cell-style="{
                   'background-color': '#f2f2f2',
                   'color': '#3a8ee6',
@@ -63,7 +63,7 @@ import echarts from 'echarts'
 export default {
   data () {
     return {
-      queryDate: [new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
+      queryDate: [new Date(new Date().getTime() - 8 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
       pickerOptions: { // 快捷键日期设置
         disabledDate (time) {
           return time.getTime() > Date.now()
@@ -89,6 +89,7 @@ export default {
       chartLoading: false,
       tApp: '',
       useTimeList: [], // 请求数据this
+      tUseTimeList: [],
       dataX: [], // x轴数据
       dataLegStr: [] // 绘图数据_Leg
     }
@@ -140,7 +141,8 @@ export default {
             type: 'error'
           })
         } else {
-          this.useTimeList = resultSet // 图表数据
+          this.tUseTimeList = resultSet // 图表数据
+          this.useTimeList = [...this.tUseTimeList].reverse()
           this.drawUseTimeChart()
         }
       })

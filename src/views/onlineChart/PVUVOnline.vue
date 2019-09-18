@@ -24,7 +24,7 @@
       </el-col>
       <div>
         <el-col :span="8" style="padding-top: 20px; padding-right: 20px">
-            <el-card shadow="always" style="background-color:#8CC554;color:#fff;font-weight:bold;">
+            <el-card shadow="always" style="background-color:#516b91;color:#fff;font-weight:bold;">
                 <div slot="header">
                     <span>日期：{{this.moment(this.queryDate).format('YYYY-MM-DD')}}</span>
                 </div>
@@ -34,7 +34,7 @@
             </el-card>
         </el-col>
         <el-col :span="8" style="padding-top: 20px;padding-right: 10px; padding-left: 10px">
-            <el-card shadow="always" style="background-color:#00A7BA;color:#fff;font-weight:bold;">
+            <el-card shadow="always" style="background-color:#59c4e6;color:#fff;font-weight:bold;">
                 <div slot="header">
                     <span>日期：{{this.moment(this.queryDate).format('YYYY-MM-DD')}}</span>
                 </div>
@@ -44,7 +44,7 @@
             </el-card>
         </el-col>
         <el-col :span="8" style="padding-top: 20px; padding-left: 20px">
-            <el-card shadow="always" style="background-color:#E73278;color:#fff;font-weight:bold;">
+            <el-card shadow="always" style="background-color:#6be6c1;color:#fff;font-weight:bold;">
                 <div slot="header">
                     <span>日期：{{this.moment(this.queryDate).format('YYYY-MM-DD')}}</span>
                 </div>
@@ -64,7 +64,7 @@
             导出数据
           </el-link>
         </el-col>
-        <el-table :data="pvuvList" highlight-current-row style="width:100%;"
+        <el-table :data="tPVUVList" highlight-current-row style="width:100%;"
                   :header-cell-style="{
                   'background-color': '#f2f2f2',
                   'color': '#3a8ee6',
@@ -114,6 +114,7 @@ export default {
       sumUV: 0,
       sumPVUVPer: 0,
       pvuvList: [], // 请求数据
+      tPVUVList: [],
       compareDate: new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000),
       compareForm: false, // 对比日期是否显示
       compareList: [], // 对比日期
@@ -153,6 +154,7 @@ export default {
           })
         } else {
           this.pvuvList = resultSet // 图表数据
+          this.tPVUVList = [...this.pvuvList].reverse()
           // 加载汇总数据
           this.getPVUVSum()
           // 绘图
@@ -298,7 +300,7 @@ export default {
         var dayStr = stackVal.split('_')[0]
         map['type'] = 'bar'
         map['data'] = this.dataY[k]
-        map['barMaxWidth'] = 80 // 最大宽度
+        map['barMaxWidth'] = 60 // 最大宽度
         map['stack'] = dayStr + 'PV/UV' // 同一柱形图 stack一致
         this.dataYSer.push(map)
       }
@@ -311,6 +313,13 @@ export default {
           trigger: 'axis',
           axisPointer: { // 坐标轴指示器，坐标轴触发有效
             type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          },
+          formatter: function (params) {
+            let relVal = ''
+            for (let i = 0; i < params.length; i++) {
+              relVal += params[i].marker + params[i].seriesName + '/' + params[i].name + '：' + params[i].value + '<br/>'
+            }
+            return relVal
           }
         },
         grid: {

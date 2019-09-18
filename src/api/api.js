@@ -84,6 +84,13 @@ export const loadOnlineOrder = params => {
     .then(res => res.data)
     .catch(function () { return { 'businessCode': 500 } })
 }
+// 加载当前PV
+export const loadCurPV = params => {
+  return axios.post(`${base}/loadCurPV`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+
 // 加载订购失败分析
 export const loadOrderFailAna = params => {
   return axios.post(`${base}/loadOrderFailAna`, qs.stringify(params))
@@ -146,6 +153,12 @@ export const loadOrderDetail = params => {
 // 订购来源
 export const loadOrderSource = params => {
   return axios.post(`${base}/loadOrderSource`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+
+export const loadOrderTrig = params => {
+  return axios.post(`${base}/loadOrderTrig`, qs.stringify(params))
     .then(res => res.data)
     .catch(function () { return { 'businessCode': 500 } })
 }

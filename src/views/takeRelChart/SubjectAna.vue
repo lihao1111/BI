@@ -74,13 +74,14 @@
 <script>
 import { loadSubjectList } from '../../api/api'
 import echarts from 'echarts'
+require('echarts/theme/shine')
 export default {
   data () {
     return {
       totalSize: 0,
       curpage: 1,
       pageSize: 15,
-      queryDate: [new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
+      queryDate: [new Date(new Date().getTime() - 8 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
       pickerOptions: { // 快捷键日期设置
         disabledDate (time) {
           return time.getTime() > Date.now()
@@ -163,45 +164,43 @@ export default {
           this.curpage = 1
           this.seledVal = 'pv' // 设置默认值
           // Top 绘图数据 []
-          var subjectListTop = []
+          var subjectListTop = [] //
           this.subjectList.forEach(item => {
             var subjectCode = item.code
             var itemMap = null
             subjectListTop.forEach(itemTop => {
               var subjectTopCode = itemTop.code
-              if(subjectTopCode === subjectCode){
+              if (subjectTopCode === subjectCode) {
                 itemMap = itemTop
-                return false
               }
             })
-            if(itemMap == null){
+            if (itemMap === null) {
               itemMap = {}
               itemMap['code'] = item.code
               itemMap['pv'] = item.pv
               itemMap['uv'] = item.uv
               subjectListTop.push(itemMap)
-            }else{
+            } else {
               itemMap['pv'] += parseInt(item.pv)
               itemMap['uv'] += parseInt(item.uv)
             }
           })
           subjectListTop.sort(this.Compare('pv'))
           subjectListTop = subjectListTop.length > 5 ? subjectListTop.slice(0, 5) : subjectListTop
-          //Top数据  32
-          this.subjectListDraw = this.subjectList
-          for(var i = this.subjectListDraw.length-1; i>=0; i--){
+          // Top数据  32
+          this.subjectListDraw = [...this.subjectList].reverse()
+          for (var i = this.subjectListDraw.length - 1; i >= 0; i--) {
             var item = this.subjectListDraw[i]
             var code = item.code
             var existsFlag = false
             subjectListTop.forEach(itemTop => {
               var codeTop = itemTop.code
-              if(codeTop == code){
+              if (codeTop === code) {
                 existsFlag = true
-                return false
               }
             })
-            if(!existsFlag){
-              this.subjectListDraw.splice(i,1);
+            if (!existsFlag) {
+              this.subjectListDraw.splice(i, 1)
             }
           }
           this.CoreChart(this.seledVal)
@@ -312,7 +311,7 @@ export default {
         series: _dataY // 图形
         // 指定颜色
       }
-      this.chartColumn = echarts.init(document.getElementById('subjectListDiv'))
+      this.chartColumn = echarts.init(document.getElementById('subjectListDiv'), 'shine')
       this.chartColumn.clear()
       this.chartColumn.setOption(option)
       window.onresize = this.chartColumn.resize // 适应图表

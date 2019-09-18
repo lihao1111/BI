@@ -39,7 +39,7 @@
         </el-form>
       </el-col>
       <el-col :span="5" style="padding-top: 20px; padding-right: 15px;">
-        <el-card shadow="always" style="height: 320px;background-color: #6EAF91; color: #fff;text-align:center;">
+        <el-card shadow="always" style="height: 320px;background-color: #06c8c9; color: #fff;text-align:center;">
           <div>
             <label style="display: block;padding-top: 40px;font-weight:bold; font-size: 30px; padding-bottom: 5px">
               {{sumPlayCount | formaterNumber}}
@@ -154,7 +154,7 @@ export default {
         3: '电影',
         4: '电视剧'
       },
-      typeMapArr: [{ id:1, name: '纯音乐'}, {id: 2, name: '视频音乐'}, {id:3, name: '电影'}, {id:4, name: '电视剧'}],
+      typeMapArr: [{ id: 1, name: '纯音乐' }, { id: 2, name: '视频音乐' }, { id: 3, name: '电影' }, { id: 4, name: '电视剧' }],
       totalSize: 0, // 分页数据
       curpage: 1,
       pageSize: 15,
@@ -164,9 +164,9 @@ export default {
       playTimePrecTYPE: [], // 扇形图 内容类型占比
       playTimeTop: [], // 内容TOP数据
       dialogPerVisible: false,
-      chooseMediaName: '', //完整度 MediaName
+      chooseMediaName: '', // 完整度 MediaName
       chooseMediaPer: {},
-      mediaPerArr: ['per_20', 'per_20_50', 'per_50_80', 'per_80'],
+      mediaPerArr: ['per_20', 'per_20_50', 'per_50_80', 'per_80']
     }
   },
   methods: {
@@ -174,10 +174,10 @@ export default {
       this.$nextTick(()=>{
         this.myChartPer = document.getElementById('playCountPer')
       })
-    },*/
+    }, */
     handleDetail ($index, row) {
       this.chooseMediaName = row.media_name
-      //请求后台
+      // 请求后台
       loadMediaPer({
         platFormId: this.tApp.id,
         mediaId: row.media_id,
@@ -191,61 +191,61 @@ export default {
           })
           return false
         } else {
-          if(resultSet.length === 0){
+          if (resultSet.length === 0) {
             this.$message({
               message: '未加载到完整度数据！',
               type: 'warning'
             })
             return false
-          }else {
+          } else {
             this.chooseMediaPer = resultSet[0]
-            //绘图
+            // 绘图
             this.dialogPerVisible = true
             this.drawPerMedia()
           }
         }
       })
     },
-    drawPerMedia: function () { //完整度绘图
+    drawPerMedia: function () { // 完整度绘图
       var dataSer = []
-      var perKey = []   //完整度 20 50 80
-      for(var key in this.chooseMediaPer){
-        var keyStr = ""
-        if(this.mediaPerArr.indexOf(key) != -1){
+      var perKey = [] // 完整度 20 50 80
+      for (var key in this.chooseMediaPer) {
+        var keyStr = ''
+        if (this.mediaPerArr.indexOf(key) !== -1) {
           switch (key) {
-            case  'per_20':
+            case 'per_20':
               keyStr = '完整度20%'
-              break;
-            case  'per_20_50':
+              break
+            case 'per_20_50':
               keyStr = '完整度20%_50%'
-              break;
-            case  'per_50_80':
+              break
+            case 'per_50_80':
               keyStr = '完整度50%_80%'
-              break;
-            case  'per_80':
+              break
+            case 'per_80':
               keyStr = '完整度80%'
-              break;
+              break
           }
           perKey.push(keyStr)
-          dataSer.push({"name": keyStr, "value": parseInt(this.chooseMediaPer[key])})
+          dataSer.push({ 'name': keyStr, 'value': parseInt(this.chooseMediaPer[key]) })
         }
       }
       var option = {
-        tooltip : {
+        tooltip: {
           trigger: 'item',
-          formatter: "{a} <br/>{b} : {c} ({d}%)"
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
         legend: {
           orient: 'vertical',
           x: 'left',
           top: 5,
           left: 10,
-          data: perKey   //['20%以下','20%-50%','50%-80%','80%以上']
+          data: perKey // ['20%以下','20%-50%','50%-80%','80%以上']
         },
-        series : [
+        series: [
           {
-            name:'观看完整度',
-            type:'pie',
+            name: '观看完整度',
+            type: 'pie',
             radius: ['50%', '70%'],
             label: {
               normal: {
@@ -269,7 +269,7 @@ export default {
           }
         ]
       }
-      this.$nextTick(()=>{    //解决 dialog内部元素加载不到的问题
+      this.$nextTick(() => { // 解决 dialog内部元素加载不到的问题
         var myChart = echarts.init(this.$refs.playCountPerDiv)
         myChart.clear()
         myChart.setOption(option)
@@ -333,7 +333,7 @@ export default {
           })
         } else {
           this.tPlayTimeList = resultSet // 图表数据
-          if(this.tPlayTimeList.length == 0){
+          if (this.tPlayTimeList.length === 0) {
             this.$notify.info({
               title: '警告',
               message: '未加载到影片播放数据！',
@@ -356,21 +356,21 @@ export default {
             this.sumPlayCount += validCountNum
             this.avgCount += parseFloat(item.avgCount)
             // cp 占比数据
-            if (cpMap[cpName] == null) {
+            if (cpMap[cpName] === null) {
               cpMap[cpName] = 0
             }
             cpMap[cpName] += validCountNum
-            if (typeMap[typeName] == null) {
+            if (typeMap[typeName] === null) {
               typeMap[typeName] = 0
             }
             typeMap[typeName] += validCountNum
-            if (sumCountMap[mediaName] == null) {
+            if (sumCountMap[mediaName] === null) {
               sumCountMap[mediaName] = 0
             }
             sumCountMap[mediaName] += validCountNum
           })
           // 平均次数
-          if(this.tPlayTimeList.length > 0){
+          if (this.tPlayTimeList.length > 0) {
             this.avgCount = (this.avgCount / this.tPlayTimeList.length)
           }
           this.drawPerCPChart(cpMap)
@@ -425,7 +425,7 @@ export default {
           formatter: '{a} <br/>{b}: {c} ({d}%)'
         }
       }
-      var myChartCp = echarts.init(document.getElementById('playCountPre_CP'))
+      var myChartCp = echarts.init(document.getElementById('playCountPre_CP'), 'roma')
       myChartCp.clear()
       myChartCp.setOption(option)
       window.onresize = myChartCp.resize // 适应图表
@@ -471,13 +471,12 @@ export default {
             data: this.playTimePrecTYPE
           }
         ], // 图
-        color: ['#749F83', '#D48265', '#61A0A8'],
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b}: {c} ({d}%)'
         }
       }
-      var myChartType = echarts.init(document.getElementById('playCountPre_TYPE'))
+      var myChartType = echarts.init(document.getElementById('playCountPre_TYPE'), 'shine')
       myChartType.clear()
       myChartType.setOption(option)
       window.onresize = myChartType.resize // 适应图表
@@ -488,24 +487,23 @@ export default {
         this.playTimeTop.push({ 'name': key, 'value': sumCountMap[key] })
       }
       this.playTimeTop.sort(this.Compare('value'))
-      this.playTimeTop = this.playTimeTop.length >20 ? this.playTimeTop.slice(0, 20) : this.playTimeTop
-      //再次格式数据TOP20
+      this.playTimeTop = this.playTimeTop.length > 20 ? this.playTimeTop.slice(0, 20) : this.playTimeTop
+      // 再次格式数据TOP20
       var dataX = []
       var dataSer = []
       this.playTimeTop.forEach(item => {
-        if(item.name === 'null'){
+        if (item.name === 'null') {
           dataX.push('其他')
-        }else{
+        } else {
           dataX.push(item.name)
         }
         dataSer.push(item.value)
       })
       var option = {
-        color: ['#3398DB'],
-        tooltip : {
+        tooltip: {
           trigger: 'axis',
-          axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+          axisPointer: { // 坐标轴指示器，坐标轴触发有效
+            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
           }
         },
         grid: {
@@ -514,32 +512,32 @@ export default {
           bottom: '10%',
           containLabel: true
         },
-        xAxis : [
+        xAxis: [
           {
-            type : 'category',
-            data : dataX,
+            type: 'category',
+            data: dataX,
             axisTick: {
               alignWithLabel: true
             }
           }
         ],
-        yAxis : [
+        yAxis: [
           {
-            type : 'value'
+            type: 'value'
           }
         ],
-        series : [
+        series: [
           {
-            name:'有效播放次数',
-            type:'bar',
+            name: '有效播放次数',
+            type: 'bar',
             barWidth: '60%',
             data: dataSer,
             itemStyle: {
               normal: {
                 label: {
-                  show: true, //开启显示
-                  position: 'top', //在上方显示
-                  textStyle: { //数值样式
+                  show: true, // 开启显示
+                  position: 'top', // 在上方显示
+                  textStyle: { // 数值样式
                     color: 'black',
                     fontSize: 16
                   }
@@ -547,23 +545,24 @@ export default {
               }
             }
           }
-        ]
+        ],
+        color: ['#0e4ac9']
       }
       var myChart = echarts.init(document.getElementById('playCountTop'))
       myChart.clear()
       myChart.setOption(option)
       window.onresize = myChart.resize // 适应图表
     },
-    Compare: function(pro) {    //排序函数
+    Compare: function (pro) { // 排序函数
       return function (obj1, obj2) {
-        var val1 = obj1[pro];
-        var val2 = obj2[pro];
-        if (val1 < val2 ) { //正序
-          return 1;
-        } else if (val1 > val2 ) {
-          return -1;
+        var val1 = obj1[pro]
+        var val2 = obj2[pro]
+        if (val1 < val2) { // 正序
+          return 1
+        } else if (val1 > val2) {
+          return -1
         } else {
-          return 0;
+          return 0
         }
       }
     },

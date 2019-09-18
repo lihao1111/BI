@@ -1,21 +1,21 @@
 <template>
     <section class="chart-container">
-        <el-row>
-            <el-col :span="8">
+        <el-row :gutter="20">
+            <el-col :span="6">
               <el-card shadow="hover" style="font-weight:bold; color:#000000">
                 <div slot="header" style="font-size: 14px;">
                   <span>{{this.moment(new Date()).format('YYYY/MM/DD HH:mm')}}</span>
                   <span style="float: right">在线用户</span>
                 </div>
                 <div style="height: 80px; line-height: 80px; text-align: center">
-                  <span style="color: #06c8c9; font-size: 48px;padding-right: 30px">
+                  <span style="color: #49c9c9; font-size: 48px;padding-right: 30px">
                     <svg-icon icon-class="peoples" />
                   </span>
                   <span style="font-size: 32px;">{{onlineUser | formaterNumber}}</span>
                 </div>
               </el-card>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-card shadow="hover" style="font-weight:bold; color:#000000">
                 <div slot="header" style="font-size: 14px;">
                   <span>{{this.moment(new Date()).format('YYYY/MM/DD HH:mm')}}</span>
@@ -29,15 +29,29 @@
                 </div>
               </el-card>
             </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-card shadow="hover" style="font-weight:bold; color:#000000">
               <div slot="header" style="font-size: 14px;">
                 <span>{{this.moment(new Date()).format('YYYY/MM/DD HH:mm')}}</span>
-                <span style="float: right">异常消息</span>
+                <span style="float: right">当前访问</span>
               </div>
               <div style="height: 80px; line-height: 80px; text-align: center">
                   <span style="color: #36a3f7; font-size: 48px;padding-right: 30px">
-                    <svg-icon icon-class="message" />
+                    <svg-icon icon-class="visits" />
+                  </span>
+                <span style="font-size: 32px">{{curPV | formaterNumber}}</span>
+              </div>
+            </el-card>
+          </el-col>
+          <el-col :span="6">
+            <el-card shadow="hover" style="font-weight:bold; color:#000000">
+              <div slot="header" style="font-size: 14px;">
+                <span>{{this.moment(new Date()).format('YYYY/MM/DD HH:mm')}}</span>
+                <span style="float: right">消息通知</span>
+              </div>
+              <div style="height: 80px; line-height: 80px; text-align: center">
+                  <span style="color: #0df7ec; font-size: 48px;padding-right: 30px">
+                    <svg-icon icon-class="gonggao" />
                   </span>
                 <span style="font-size: 32px">{{onlineErr}}</span>
               </div>
@@ -73,8 +87,9 @@
 </template>
 
 <script>
+import { loadCurUser, loadCurOrder, loadOnlineErr, loadCurPV, loadDayPVUV, loadDayUseTime, loadWeekUser } from '../../api/api'
 import echarts from 'echarts'
-import { loadCurUser, loadCurOrder, loadOnlineErr, loadDayPVUV, loadDayUseTime, loadWeekUser } from '../../api/api'
+require('echarts/theme/macarons')
 export default {
   data () {
     return {
@@ -85,6 +100,8 @@ export default {
       onlineOrderTimer: '', // 实时在线定时器
       onlineErr: 0,
       onlineErrTimer: '', // 实时异常信息定时器
+      curPV: 0,
+      curPVTimer: '', // 当前PV信息定时器
       dayPVUVDatas: [],
       dayPVUVLoading: false,
       dayUserDatas: [], // 日 用户数据
@@ -317,6 +334,28 @@ export default {
         }
       })
     },
+    getCurPV () {
+      loadCurPV({ nowDate: new Date(), platFormId: this.tApp.id }).then(data => { // ?
+        let { businessCode, resultSet } = data
+        if (businessCode === 'unauthenticated') { // 有权限认证
+          this.$message({
+            message: '未授权，请联系管理员！',
+            type: 'error'
+          })
+          return false
+        }
+        if (businessCode !== 'success') {
+          this.$message({
+            message: '当前访问数据加载失败，请联系管理员！',
+            type: 'error'
+          })
+        } else {
+          if (resultSet != null && resultSet.length > 0) {
+            this.curPV = resultSet[0].pv
+          }
+        }
+      })
+    },
     getDayPVUV () { // 日 pvuv
       this.dayPVUVLoading = true
       loadDayPVUV({
@@ -424,7 +463,7 @@ export default {
         tooltip: {
           trigger: 'axis'
         },
-        color: ['#07C7B1', '#C7193B']
+        color: ['#c12e34', '#e6b600']
       }
       this.chartColumn = echarts.init(document.getElementById('dayPVUVChart'))
       this.chartColumn.clear()
@@ -642,6 +681,9 @@ export default {
 
     this.getOnlineErr()
     this.onlineErrTimer = setInterval(this.getOnlineErr, 1000 * 60 * 10) // 每二十分钟调用一次
+
+    this.getCurPV()
+    this.curPVTimer = setInterval(this.getCurPV, 1000 * 60 * 10) // 每二十分钟调用一次
   },
   mounted: function () {
   },

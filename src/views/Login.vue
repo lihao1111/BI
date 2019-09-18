@@ -187,7 +187,7 @@ export default {
     min-height: 100%;
     width: 100%;
     background-color: $bg;
-    background-image: url("../assets/login.jpg");
+    //background-image: url("../assets/login.jpg");
     overflow: hidden;
 
     .login-form {

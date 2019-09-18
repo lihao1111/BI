@@ -66,6 +66,7 @@
 <script>
 import { loadOnlineUser, compareOnlineUser } from '../../api/api'
 import echarts from 'echarts'
+require('echarts/theme/shine')
 export default {
   data () {
     return {
@@ -121,6 +122,7 @@ export default {
               this.tUserList.push(item)
             }
           })
+          this.tUserList.reverse()
           this.queryUserChart()
         }
       })
@@ -225,7 +227,14 @@ export default {
       var option = {
         border: false,
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
+          formatter: function (params) {
+            let relVal = ''
+            for (let i = 0; i < params.length; i++) {
+              relVal += params[i].marker + params[i].seriesName + '/' + params[i].name + '：' + params[i].value + '<br/>'
+            }
+            return relVal
+          }
         },
         legend: {
           orient: 'vertical',
@@ -254,7 +263,7 @@ export default {
         series: _dataY // 图形
         // 指定颜色
       }
-      this.chart = echarts.init(document.getElementById('onlineUserDiv'))
+      this.chart = echarts.init(document.getElementById('onlineUserDiv'), 'shine')
       this.chart.clear() // 解决残留数据问题
       this.chart.setOption(option)
       window.onresize = this.chart.resize // 适应图表

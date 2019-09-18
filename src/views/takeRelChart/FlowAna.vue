@@ -27,6 +27,7 @@
 <script>
 import { loadFlowAna } from '../../api/api'
 import echarts from 'echarts'
+require('echarts/theme/shine')
 export default {
   data: function () {
     return {
@@ -143,7 +144,7 @@ export default {
           }
         ]
       }
-      this.chartColumn = echarts.init(document.getElementById('flowAnaDiv'))
+      this.chartColumn = echarts.init(document.getElementById('flowAnaDiv'), 'shine')
       this.chartColumn.clear()
       this.chartColumn.setOption(option)
       window.onresize = this.chartColumn.resize // 适应图表

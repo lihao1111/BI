@@ -71,7 +71,7 @@ import echarts from 'echarts'
 export default {
   data () {
     return {
-      queryDate: [new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
+      queryDate: [new Date(new Date().getTime() - 8 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
       pickerOptions: { // 快捷键日期设置
         disabledDate (time) {
           return time.getTime() > Date.now()
@@ -171,7 +171,11 @@ export default {
           })
         } else {
           this.tActiveUserList = resultSet // 表格数据
-          this.activeUserList = resultSet // 图表数据
+          /*  this.activeUserList = resultSet // 图表数据 */
+          this.activeUserList = [...this.tActiveUserList].reverse() // 该方法会改变原来的数组，而不会创建新的数组
+          console.log(resultSet)
+          console.log(this.activeUserList)
+          console.log(this.tActiveUserList)
           this.seledVal = 'login_uv' // 设置默认值
           this.CoreChart(this.seledVal)
         }
@@ -199,7 +203,7 @@ export default {
         }
         var map = {}
         map['name'] = '新用户登录'
-        map['barWidth'] = 80
+        map['barWidth'] = 60
         map['type'] = 'bar'
         map['stack'] = '总量'
         map['label'] = { 'normal': {
@@ -209,7 +213,7 @@ export default {
         this.dataY.push(map)
         map = {}
         map['name'] = '老用户登录'
-        map['barWidth'] = 80
+        map['barWidth'] = 60
         map['type'] = 'bar'
         map['stack'] = '总量'
         map['label'] = { 'normal': {
@@ -226,7 +230,7 @@ export default {
         }
         map = {}
         map['name'] = '登录次数'
-        map['barWidth'] = 80
+        map['barWidth'] = 60
         map['type'] = 'bar'
         map['stack'] = '总量'
         map['label'] = { 'normal': {

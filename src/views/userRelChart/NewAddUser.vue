@@ -58,10 +58,11 @@
 <script>
 import { loadNewAddUser } from '../../api/api'
 import echarts from 'echarts'
+require('echarts/theme/shine')
 export default {
   data () {
     return {
-      queryDate: [new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
+      queryDate: [new Date(new Date().getTime() - 8 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
       pickerOptions: { // 快捷键日期设置
         disabledDate (time) {
           return time.getTime() > Date.now()
@@ -132,7 +133,7 @@ export default {
         })
         return false
       }
-      var interval = (this.queryDate[1].getTime() - this.queryDate[0].getTime()) / (24 * 60 * 60 * 1000)
+      var interval = (new Date(this.queryDate[1]).getTime() - new Date(this.queryDate[0]).getTime()) / (24 * 60 * 60 * 1000)
       if (interval > 31) {
         this.$message({
           showClose: true,
@@ -173,12 +174,13 @@ export default {
       var retain1Arr = []
       var retain3Arr = []
       var retain7Arr = []
-      for (let k in this.tNewAddUserList) {
-        this.dataX.push(this.tNewAddUserList[k].day)
-        newAddArr.push(this.tNewAddUserList[k].newAddNum == null ? 0 : parseInt(this.tNewAddUserList[k].newAddNum))
-        retain1Arr.push(this.tNewAddUserList[k].retained1Num == null ? 0 : parseInt(this.tNewAddUserList[k].retained1Num))
-        retain3Arr.push(this.tNewAddUserList[k].retained3Num == null ? 0 : parseInt(this.tNewAddUserList[k].retained3Num))
-        retain7Arr.push(this.tNewAddUserList[k].retained7Num == null ? 0 : parseInt(this.tNewAddUserList[k].retained7Num) )
+      var allDataArr = [...this.tNewAddUserList].reverse()
+      for (let k in allDataArr) {
+        this.dataX.push(allDataArr[k].day)
+        newAddArr.push(allDataArr[k].newAddNum == null ? 0 : parseInt(allDataArr[k].newAddNum))
+        retain1Arr.push(allDataArr[k].retained1Num == null ? 0 : parseInt(allDataArr[k].retained1Num))
+        retain3Arr.push(allDataArr[k].retained3Num == null ? 0 : parseInt(allDataArr[k].retained3Num))
+        retain7Arr.push(allDataArr[k].retained7Num == null ? 0 : parseInt(allDataArr[k].retained7Num))
       }
       var option = { // 核心数据 数据展示
         border: false,
@@ -233,7 +235,7 @@ export default {
           trigger: 'axis'
         }
       }
-      this.chartColumn = echarts.init(document.getElementById('newAddUserDiv'))
+      this.chartColumn = echarts.init(document.getElementById('newAddUserDiv'), 'shine')
       this.chartColumn.clear()
       this.chartColumn.setOption(option)
       window.onresize = this.chartColumn.resize // 适应图表

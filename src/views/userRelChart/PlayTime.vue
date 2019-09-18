@@ -33,7 +33,7 @@
             导出数据
           </el-link>
         </el-col>
-        <el-table :data="playTimeList" highlight-current-row style="width:100%;"
+        <el-table :data="tPlayTimeList" highlight-current-row style="width:100%;"
                   :header-cell-style="{
                   'background-color': '#f2f2f2',
                   'color': '#3a8ee6',
@@ -89,6 +89,7 @@ export default {
       chartLoading: false,
       tApp: '',
       playTimeList: [], // 请求数据this
+      tPlayTimeList: [],
       dataX: [], // x轴数据
       dataLegStr: [] // 绘图数据_Leg
     }
@@ -140,7 +141,8 @@ export default {
             type: 'error'
           })
         } else {
-          this.playTimeList = resultSet // 图表数据
+          this.tPlayTimeList = resultSet // 图表数据
+          this.playTimeList = [...this.tPlayTimeList].reverse() // 反转日期
           if (this.playTimeList == null || this.playTimeList.length === 0) {
             this.$notify.info({
               title: '警告',

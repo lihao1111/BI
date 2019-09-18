@@ -61,7 +61,8 @@ export default new Router({
       children: [
         /* { path: 'orderAna', component: () => import('./views/orderAna/OrderAna.vue'), name: '订购/退订', meta: { keepAlive: true } }, */
         { path: 'OrderDetail', component: () => import('./views/orderAna/OrderDetail.vue'), name: '订购/退订', meta: { title: '订购/退订', keepAlive: true } },
-        { path: 'orderSource', component: () => import('./views/orderAna/OrderSource.vue'), name: '订购来源分析', meta: { title: '订购来源分析', keepAlive: true } }
+        { path: 'orderSource', component: () => import('./views/orderAna/OrderSource.vue'), name: '订购来源分析', meta: { title: '订购来源分析', keepAlive: true } },
+        { path: 'OrderTrigTop', component: () => import('./views/orderAna/OrderTrigTop.vue'), name: '订购触发排行', meta: { title: '订购触发排行', keepAlive: true } }
         /* { path: 'OrderFailAna', component: () => import('./views/orderAna/OrderFailAna.vue'), name: '订购失败分析', meta: { title: '订购失败分析', keepAlive: true } } */
       ]
     },

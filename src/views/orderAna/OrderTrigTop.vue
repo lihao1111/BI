@@ -25,7 +25,7 @@
       </el-form>
     </el-col>
     <el-col :span="24">
-      <div id="orderSourceDiv" style="width:100%; height:380px; text-align: center" v-loading="chartLoading"></div>
+      <div id="orderTrigDiv" style="width:100%; height:380px; text-align: center" v-loading="chartLoading"></div>
     </el-col>
     <div style="padding: 0px 10px;">
       <el-col :span="24" style=" margin-top: 10px; height: 40px; line-height: 40px; background-color: rgba(17, 146, 175, 0.18);">
@@ -34,23 +34,21 @@
           导出数据
         </el-link>
       </el-col>
-      <el-table :data="orderSourceList" highlight-current-row style="width:100%;"
+      <el-table :data="orderTrigList" highlight-current-row style="width:100%;"
                 :header-cell-style="{
                   'background-color': '#f2f2f2',
                   'color': '#3a8ee6',
                   'border-bottom': '1px #f2f2f2 solid'
                 }"
       >
-        <el-table-column prop="day" label="日期" align="center"></el-table-column>
-        <el-table-column prop="describe" label="来源UI" align="center" :formatter="formaterText"></el-table-column>
-        <el-table-column prop="orderingPerUi_nums" sortable label="总流量" align="center"></el-table-column>
-        <el-table-column prop="orderedPerUi_nums" sortable label="订购成功流量" align="center"></el-table-column>
+        <el-table-column prop="name" label="内容名称" align="center" :formatter="formaterText"></el-table-column>
+        <el-table-column prop="subing_num" sortable label="订购发起次数" align="center"></el-table-column>
       </el-table>
     </div>
   </section>
 </template>
 <script>
-import { loadOrderSource } from '../../api/api'
+import { loadOrderTrig } from '../../api/api'
 import echarts from 'echarts'
 export default {
   data () {
@@ -88,8 +86,8 @@ export default {
       },
       chartLoading: false,
       tApp: '',
-      orderSourceList: [], // 请求数据
-      drawDatas: [] // 画图数据
+      orderTrigList: [], // 请求数据
+      drawDatas: []
     }
   },
   methods: {
@@ -112,19 +110,19 @@ export default {
       }
       require.ensure([], () => {
         const { exportExcel } = require('../../excel/Export2Excel')
-        const tHeader = ['日期', '来源UI', '订购来源流量', '订购成功来源流量']
+        const tHeader = ['日期', '内容名称', '订购发起次数']
         // 上面设置Excel的表格第一行的标题
-        const filterVal = ['display_name', 'describe', 'link_num']
+        const filterVal = ['day', 'mediaName', 'subing_num']
         // 上面的'day', 'hour', 'online_num'是tableData里对象的属性
         const list = this.tOrderSourceList // 把data里的tableData存到list
         const data = this.formatJson(filterVal, list)
-        exportExcel(tHeader, data, '订购来源excel')
+        exportExcel(tHeader, data, '订购触发排行excel')
       })
     },
     formatJson (filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => v[j]))
     },
-    getOrderSource: function () {
+    getOrderTrig: function () {
       if (!this.queryDate) {
         this.$message({
           showClose: true,
@@ -142,7 +140,7 @@ export default {
         return false
       }
       this.chartLoading = true
-      loadOrderSource({
+      loadOrderTrig({
         startDate: this.queryDate[0],
         endDate: this.queryDate[1],
         platFormId: this.tApp.id
@@ -158,47 +156,22 @@ export default {
         }
         if (businessCode !== 'success') {
           this.$message({
-            message: '订购来源数据加载失败，请联系管理员！',
+            message: '订购触发排行加载失败，请联系管理员！',
             type: 'error'
           })
         } else {
-          this.orderSourceList = resultSet
-          // 整理数据
-          this.drawDatas = []
-          this.orderSourceList.forEach(orderSourceItem => {
-            let item
-            this.drawDatas.forEach(drawItem => {
-              if (orderSourceItem['ui'] === drawItem['ui']) {
-                item = drawItem
-              }
-            })
-            if (item) {
-              item['orderingPerUi_nums'] += parseInt(orderSourceItem['orderingPerUi_nums'])
-              item['orderedPerUi_nums'] += parseInt(orderSourceItem['orderedPerUi_nums'])
-            } else {
-              // let copyItem = {...orderSourceItem}   // js 引用类型 以及 clone
-              this.drawDatas.push(orderSourceItem)
-            }
-          })
-          // 绘图
+          this.orderTrigList = resultSet
+          this.drawDatas = this.orderTrigList.length > 10 ? this.orderTrigList.slice(0, 10) : this.orderTrigList
           this.drawOrderChart()
         }
       })
     },
     drawOrderChart: function () {
-      var dataLegStr = ['订购触发来源', '订购成功来源']
       var dataX = []
-      var dataSerOrdering = []
-      var dataSerOrdered = []
-      this.drawDatas.sort(function (a, b) {
-        if (a['orderingPerUi_nums'] < b['orderingPerUi_nums']) { // 按照  orderingPerUi_nums 正序排序
-          return 1
-        }
-      })
+      var dataV = []
       this.drawDatas.forEach(item => {
-        dataX.push(item['describe'] == null ? '暂无' : item['describe'])
-        dataSerOrdering.push(parseInt(item['orderingPerUi_nums']))
-        dataSerOrdered.push(parseInt(item['orderedPerUi_nums']))
+        dataX.push(item.name)
+        dataV.push(item.subing_num)
       })
       var option = { // 核心数据 数据展示
         border: false,
@@ -206,7 +179,7 @@ export default {
           orient: 'vertical',
           left: 'center',
           bottom: 'bottom',
-          data: dataLegStr
+          data: ['内容名称']
         },
         label: {
           show: true, // 开启显示
@@ -217,38 +190,26 @@ export default {
             fontWeight: 600
           }
         },
-        xAxis: [
-          {
-            type: 'category',
-            axisTick: { show: false },
-            data: dataX
-          }
-        ],
-        yAxis: [
-          {
-            type: 'value'
-          }
-        ],
-        series: [
-          {
-            name: '订购触发来源',
-            type: 'bar',
-            data: dataSerOrdering
-          },
-          {
-            name: '订购成功来源',
-            type: 'bar',
-            data: dataSerOrdered
-          }
-        ], // 图
+        xAxis: {
+          type: 'category',
+          data: dataX
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [{
+          data: dataV,
+          type: 'bar'
+        }],
         tooltip: {
           trigger: 'axis',
           axisPointer: {
             type: 'shadow'
           }
-        }
+        },
+        color: ['#2123c9']
       }
-      this.chartColumn = echarts.init(document.getElementById('orderSourceDiv'))
+      this.chartColumn = echarts.init(document.getElementById('orderTrigDiv'))
       this.chartColumn.clear()
       this.chartColumn.setOption(option)
       window.onresize = this.chartColumn.resize // 适应图表
@@ -257,7 +218,7 @@ export default {
   created: function () {
     // 展示数据
     this.tApp = JSON.parse(sessionStorage.getItem('tApp'))
-    this.getOrderSource()
+    this.getOrderTrig()
   },
   mounted: function () {
   },

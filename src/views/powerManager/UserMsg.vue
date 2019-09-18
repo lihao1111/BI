@@ -246,7 +246,7 @@ export default {
         return false
       }
       var chooseKeys = ''
-      this.$refs.authTree.getCheckedKeys().forEach(item => {
+      this.$refs.authUserTree.getCheckedKeys().forEach(item => {
         if (item) {
           chooseKeys += item + ','
         }

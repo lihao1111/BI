@@ -29,7 +29,7 @@
       </el-form>
     </el-col>
     <el-col :span="6" style="padding-top: 20px;padding-right: 20px">
-      <el-card shadow="always" style="background-color:#8CC554;color:#fff;font-weight:bold;">
+      <el-card shadow="always" style="background-color:#516b91;color:#fff;font-weight:bold;">
         <div slot="header">
           <span>总订购：</span>
         </div>
@@ -39,7 +39,7 @@
       </el-card>
     </el-col>
     <el-col :span="6" style="padding-top: 20px;padding-right: 10px;padding-left: 10px">
-      <el-card shadow="always" style="background-color:#00A7BA;color:#fff;font-weight:bold;">
+      <el-card shadow="always" style="background-color:#59c4e6;color:#fff;font-weight:bold;">
         <div slot="header">
           <span>新用户订购:</span>
         </div>
@@ -49,7 +49,7 @@
       </el-card>
     </el-col>
     <el-col :span="6" style="padding-top: 20px;padding-right: 10px;padding-left: 10px">
-      <el-card shadow="always" style="background-color:#E73278;color:#fff;font-weight:bold;">
+      <el-card shadow="always" style="background-color:#6be6c1;color:#fff;font-weight:bold;">
         <div slot="header">
           <span>老用户订购:</span>
         </div>
@@ -59,7 +59,7 @@
       </el-card>
     </el-col>
     <el-col :span="6" style="padding-top: 20px;padding-left: 20px">
-      <el-card shadow="always" style="background-color:#FFA705;color:#fff;font-weight:bold;">
+      <el-card shadow="always" style="background-color:#6b66f7;color:#fff;font-weight:bold;">
         <div slot="header">
           <span>退订:</span>
         </div>
@@ -102,6 +102,7 @@
 <script>
 import { loadOrderDetail } from '../../api/api'
 import echarts from 'echarts'
+require('echarts/theme/roma')
 export default {
   data () {
     return {
@@ -310,7 +311,7 @@ export default {
             name: '老用户首次订购',
             type: 'bar',
             stack: '总量',
-            barMaxWidth: 80,
+            barMaxWidth: 60,
             label: {
               normal: {
                 show: true
@@ -322,7 +323,7 @@ export default {
             name: '老用户再次订购',
             type: 'bar',
             stack: '总量',
-            barMaxWidth: 80,
+            barMaxWidth: 60,
             label: {
               normal: {
                 show: true
@@ -334,7 +335,7 @@ export default {
             name: '退订',
             type: 'bar',
             stack: '总量',
-            barMaxWidth: 80,
+            barMaxWidth: 60,
             label: {
               normal: {
                 show: true
