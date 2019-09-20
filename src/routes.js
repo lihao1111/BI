@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
 export default new Router({
-  mode: 'history', // 生产环境使用hash
+  mode: 'hash', // 生产环境使用hash
   base: process.env.BASE_URL,
   routes: [
     {
@@ -101,7 +101,7 @@ export default new Router({
         { path: 'authMsg', component: () => import('./views/powerManager/AuthMsg.vue'), name: '权限管理', meta: { title: '权限管理', keepAlive: false } }
       ]
     },
-    {
+    /* {
       path: '/',
       component: () => import('./views/Home.vue'),
       name: '河北音乐支撑',
@@ -109,7 +109,7 @@ export default new Router({
       children: [
         { path: 'hbMusicMsg', component: () => import('./views/hbMusicManager/HBMusicMsg.vue'), name: '推荐位详情', meta: { title: '河北音乐支撑', keepAlive: false } }
       ]
-    },
+    }, */
     {
       path: '*',
       hidden: true,

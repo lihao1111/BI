@@ -1,8 +1,8 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="off" label-position="left">
       <div class="title-container">
-        <h3 class="title">淘景立画BI系统</h3>
+        <h3 class="title"><img :src="this.imgSrc" style="margin-right: 25px"/>Magic View</h3>
       </div>
       <el-form-item prop="username">
         <span class="svg-container">
@@ -15,7 +15,7 @@
                 name="username"
                 type="text"
                 tabindex="1"
-                auto-complete="on"
+                autocomplete="off"
         />
       </el-form-item>
 
@@ -31,7 +31,7 @@
                 placeholder="密码"
                 name="password"
                 tabindex="2"
-                auto-complete="on"
+                autocomplete="off"
                 @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
@@ -58,7 +58,8 @@ export default {
         password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       },
       loading: false,
-      passwordType: 'password'
+      passwordType: 'password',
+      imgSrc: ''
     }
   },
   methods: {
@@ -117,7 +118,7 @@ export default {
           })
         } else {
           // 产品视图存放在session
-          let apps = resultSet.filter(item => item.id === 5 || item.id === 14) // GS.CMCC  || HB.CTCC
+          let apps = resultSet.filter(item => item.id === 5 || item.id === 14 || item.id === 11) // GS.CMCC  || HB.CTCC ||SC.CMCC
           sessionStorage.setItem('apps', JSON.stringify(apps))
           sessionStorage.setItem('tApp', JSON.stringify(resultSet[4])) // 默认设置第一个产品视图
           // 跳转dashboard
@@ -127,6 +128,7 @@ export default {
     }
   },
   mounted: function () {
+    this.imgSrc = require('../assets/sysIcon1.png')
   }
 }
 </script>
@@ -151,7 +153,6 @@ export default {
       display: inline-block;
       height: 47px;
       width: 85%;
-
       input {
         background: transparent;
         border: 0px;
@@ -163,7 +164,8 @@ export default {
         caret-color: $cursor;
 
         &:-webkit-autofill {
-          box-shadow: 0 0 0px 1000px $bg inset !important;
+          background: transparent;
+          box-shadow: 0 0 0px 1000px rgb(3,10,48) inset !important;
           -webkit-text-fill-color: $cursor !important;
         }
       }
@@ -180,22 +182,27 @@ export default {
 
 <style lang="scss" scoped>
   $bg:#2d3a4b;
-  $dark_gray:#889aa4;
+  $dark_gray:#fff;
   $light_gray:#eee;
 
   .login-container {
     min-height: 100%;
     width: 100%;
-    background-color: $bg;
-    //background-image: url("../assets/login.jpg");
     overflow: hidden;
-
+    background: url('../assets/login5.jpg') no-repeat;
     .login-form {
-      position: relative;
+      /*position: relative;
       width: 520px;
       max-width: 100%;
       padding: 160px 35px 0;
-      margin: 0 auto;
+      margin: 0 auto;*/
+      position: absolute;
+      left: 50%;
+      top:50%;
+      margin-left: -260px;
+      margin-top: -173px;
+      width: 520px;
+      max-width: 100%;
       overflow: hidden;
     }
 
@@ -218,12 +225,11 @@ export default {
       width: 30px;
       display: inline-block;
     }
-
     .title-container {
       position: relative;
 
       .title {
-        font-size: 26px;
+        font-size: 32px;
         color: $light_gray;
         margin: 0px auto 40px auto;
         text-align: center;

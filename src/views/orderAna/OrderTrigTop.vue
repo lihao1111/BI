@@ -20,7 +20,7 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary " size="small" icon="el-icon-search" v-on:click="getOrderSource">查询</el-button>
+          <el-button type="primary " size="small" icon="el-icon-search" v-on:click="getOrderTrig">查询</el-button>
         </el-form-item>
       </el-form>
     </el-col>
@@ -101,7 +101,7 @@ export default {
       return retVal
     },
     handleExport () {
-      if (this.orderSourceList.length === 0) {
+      if (this.orderTrigList.length === 0) {
         this.$message({
           message: '表格无数据，导出异常！',
           type: 'warning'
@@ -112,9 +112,9 @@ export default {
         const { exportExcel } = require('../../excel/Export2Excel')
         const tHeader = ['日期', '内容名称', '订购发起次数']
         // 上面设置Excel的表格第一行的标题
-        const filterVal = ['day', 'mediaName', 'subing_num']
+        const filterVal = ['day', 'name', 'subing_num']
         // 上面的'day', 'hour', 'online_num'是tableData里对象的属性
-        const list = this.tOrderSourceList // 把data里的tableData存到list
+        const list = this.orderTrigList // 把data里的tableData存到list
         const data = this.formatJson(filterVal, list)
         exportExcel(tHeader, data, '订购触发排行excel')
       })
@@ -175,11 +175,14 @@ export default {
       })
       var option = { // 核心数据 数据展示
         border: false,
+        toolbox: {
+          show: true,
+          feature: {
+            saveAsImage: { show: true }
+          }
+        },
         legend: {
-          orient: 'vertical',
-          left: 'center',
-          bottom: 'bottom',
-          data: ['内容名称']
+          data: ['订购触发']
         },
         label: {
           show: true, // 开启显示
@@ -192,12 +195,17 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: dataX
+          data: dataX,
+          axisLabel: {
+            interval: 0, // 横轴信息全部显示
+            rotate: -15// -15度角倾斜显示
+          }
         },
         yAxis: {
           type: 'value'
         },
         series: [{
+          name: '订购触发',
           data: dataV,
           type: 'bar'
         }],
@@ -207,7 +215,7 @@ export default {
             type: 'shadow'
           }
         },
-        color: ['#2123c9']
+        color: ['#3398DB']
       }
       this.chartColumn = echarts.init(document.getElementById('orderTrigDiv'))
       this.chartColumn.clear()

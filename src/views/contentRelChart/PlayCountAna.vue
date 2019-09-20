@@ -1,116 +1,116 @@
 <!--suppress ALL -->
 <template>
-    <section class="chart-container">
-      <!--工具条-->
-      <el-col :span="24" class="toolbar1" style="height: 50px; padding-left: 10px; padding-top: 5px">
-        <el-form :inline="true">
-          <el-form-item>
-            <div class="block">
-              <el-date-picker
-                      style="width: 220px"
-                      v-model="queryDate"
-                      type="daterange"
-                      value-format="yyyy-MM-dd"
-                      size="small"
-                      align="center"
-                      range-separator="至"
-                      start-placeholder="开始日期"
-                      end-placeholder="结束日期"
-                      :picker-options="pickerOptions">
-              </el-date-picker>
-            </div>
-          </el-form-item>
-          <el-form-item label="内容类型：">
-            <el-select v-model="contentType" size="small" style="width: 160px" clearable placeholder="请选择内容类型">
-              <el-option v-for="type in typeMapArr" :label="type.name" :value="type.id" :key="type.id"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="所属CP：">
-            <el-select v-model="contentCP" size="small" style="width: 160px" clearable placeholder="请选择CP">
-              <el-option v-for="cp in cps" :key="cp.id" :value="cp.id" :label="cp.name"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="内容名称：">
-            <el-input v-model="contentKey" size="small" style="width: 180px"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary " size="small" icon="el-icon-search" v-on:click="getPlayCount">查询</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
-      <el-col :span="5" style="padding-top: 20px; padding-right: 15px;">
-        <el-card shadow="always" style="height: 320px;background-color: #06c8c9; color: #fff;text-align:center;">
-          <div>
-            <label style="display: block;padding-top: 40px;font-weight:bold; font-size: 30px; padding-bottom: 5px">
-              {{sumPlayCount | formaterNumber}}
-            </label>
-            <em style="padding: 0px 10px;border-radius:5px; box-shadow:rgba(255,255,255,.5) 0px 0px 10px 5px;">总播放次数</em>
+  <section class="chart-container">
+    <!--工具条-->
+    <el-col :span="24" class="toolbar1" style="height: 50px; padding-left: 10px; padding-top: 5px">
+      <el-form :inline="true">
+        <el-form-item>
+          <div class="block">
+            <el-date-picker
+                style="width: 220px"
+                v-model="queryDate"
+                type="daterange"
+                value-format="yyyy-MM-dd"
+                size="small"
+                align="center"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :picker-options="pickerOptions">
+            </el-date-picker>
           </div>
-          <label style="display: block;padding-top: 70px;font-weight:bold; font-size: 30px; padding-bottom: 5px">
-            {{avgCount.toFixed(2)}}
+        </el-form-item>
+        <el-form-item label="内容类型：">
+          <el-select v-model="contentType" size="small" style="width: 160px" clearable placeholder="请选择内容类型">
+            <el-option v-for="type in typeMapArr" :label="type.name" :value="type.id" :key="type.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属CP：">
+          <el-select v-model="contentCP" size="small" style="width: 160px" clearable placeholder="请选择CP">
+            <el-option v-for="cp in cps" :key="cp.id" :value="cp.id" :label="cp.name"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="内容名称：">
+          <el-input v-model="contentKey" size="small" style="width: 180px"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary " size="small" icon="el-icon-search" v-on:click="getPlayCount">查询</el-button>
+        </el-form-item>
+      </el-form>
+    </el-col>
+    <el-col :span="4" style="padding-top: 20px; padding-right: 15px;">
+      <el-card shadow="always" style="height: 320px;text-align:center;">
+        <div>
+          <label style="display: block;padding-top: 40px;font-weight:bold; font-size: 30px; padding-bottom: 5px;">
+            {{sumPlayCount | formaterNumber}}
           </label>
-          <em style="padding: 0px 10px;border-radius:5px; box-shadow:rgba(255,255,255,.5) 0px 0px 10px 5px;">人均播放次数</em>
-        </el-card>
+          <em style="padding: 0px 10px;border-radius:5px; box-shadow:rgba(255,255,255,.5) 0px 0px 10px 5px;background:#295991;color:#fff">总播放次数</em>
+        </div>
+        <label style="display: block;padding-top: 70px;font-weight:bold; font-size: 30px; padding-bottom: 5px;">
+          {{avgCount.toFixed(2)}}
+        </label>
+        <em style="padding: 0px 10px;border-radius:5px; box-shadow:rgba(255,255,255,.5) 0px 0px 10px 5px;background:#295991;color:#fff">人均播放次数</em>
+      </el-card>
+    </el-col>
+    <el-col :span="12" style="padding-top: 20px; padding-right: 15px">
+      <div id="playCountPre_CP" class="likeCard"></div>
+    </el-col>
+    <el-col :span="8" style="padding-top: 20px;">
+      <div id="playCountPre_TYPE" class="likeCard"></div>
+    </el-col>
+    <el-col :span="24">
+      <div id="playCountTop" style="width:100%; height:550px;" v-loading="chartLoading"></div>
+    </el-col>
+    <div style="padding: 0px 10px;">
+      <el-col :span="24" style=" margin-top: 10px; height: 40px; line-height: 40px; background-color: rgba(17, 146, 175, 0.18);">
+        <span style="padding:10px; color: #606266;">详细数据<i class="el-icon-info"></i></span>
+        <el-link type="primary" :underline="false" style="float: right; margin-right: 10px; font-weight: bold" icon="el-icon-download" @click="handleExport">
+          导出数据
+        </el-link>
       </el-col>
-      <el-col :span="11" style="padding-top: 20px; padding-right: 15px">
-        <div id="playCountPre_CP" class="likeCard"></div>
-      </el-col>
-      <el-col :span="8" style="padding-top: 20px;">
-        <div id="playCountPre_TYPE" class="likeCard"></div>
-      </el-col>
-      <el-col :span="24">
-        <div id="playCountTop" style="width:100%; height:550px;" v-loading="chartLoading"></div>
-      </el-col>
-      <div style="padding: 0px 10px;">
-        <el-col :span="24" style=" margin-top: 10px; height: 40px; line-height: 40px; background-color: rgba(17, 146, 175, 0.18);">
-          <span style="padding:10px; color: #606266;">详细数据<i class="el-icon-info"></i></span>
-          <el-link type="primary" :underline="false" style="float: right; margin-right: 10px; font-weight: bold" icon="el-icon-download" @click="handleExport">
-            导出数据
-          </el-link>
-        </el-col>
-        <el-table :data="tPlayTimeList.slice((curpage-1) * pageSize, curpage * pageSize)" highlight-current-row style="width:100%;"
-                  :header-cell-style="{
+      <el-table :data="tPlayTimeList.slice((curpage-1) * pageSize, curpage * pageSize)" highlight-current-row style="width:100%;"
+                :header-cell-style="{
                   'background-color': '#f2f2f2',
                   'color': '#3a8ee6',
                   'border-bottom': '1px #f2f2f2 solid'
                   }"
-        >
-          <el-table-column prop="day" sortable label="日期" align="left"></el-table-column>
-          <el-table-column prop="media_id" label="内容ID" align="left"></el-table-column>
-          <el-table-column prop="media_name" label="内容名称" align="left"></el-table-column>
-          <el-table-column prop="media_type" label="内容类型" align="left" :formatter="formaterText"></el-table-column>
-          <el-table-column prop="cp_name" label="提供方名称" align="left"></el-table-column>
-          <el-table-column prop="validCount" sortable label="有效播放次数" align="left"></el-table-column>
-          <el-table-column label="详情" align="center">
-            <template slot-scope="scope">
-              <el-button type="primary"
-                         size="mini"
-                         icon="el-icon-search"
-                         @click="handleDetail(scope.$index, scope.row)">完整度
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-col :span="24"> <!--分页条-->
-          <el-pagination
-                  background
-                  @current-change="handleCurrentChange"
-                  :page-size="pageSize"
-                  :total="totalSize"
-                  layout="prev, pager, next"
-                  style="float: right">
-          </el-pagination>
-        </el-col>
+      >
+        <el-table-column prop="day" sortable label="日期" align="left"></el-table-column>
+        <el-table-column prop="media_id" label="内容ID" align="left"></el-table-column>
+        <el-table-column prop="media_name" label="内容名称" align="left"></el-table-column>
+        <el-table-column prop="media_type" label="内容类型" align="left" :formatter="formaterText"></el-table-column>
+        <el-table-column prop="cp_name" label="提供方名称" align="left"></el-table-column>
+        <el-table-column prop="validCount" sortable label="有效播放次数" align="left"></el-table-column>
+        <el-table-column label="详情" align="center">
+          <template slot-scope="scope">
+            <el-button type="primary"
+                       size="mini"
+                       icon="el-icon-search"
+                       @click="handleDetail(scope.$index, scope.row)">完整度
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-col :span="24"> <!--分页条-->
+        <el-pagination
+            background
+            @current-change="handleCurrentChange"
+            :page-size="pageSize"
+            :total="totalSize"
+            layout="prev, pager, next"
+            style="float: right">
+        </el-pagination>
+      </el-col>
+    </div>
+    <!--弹出框-->
+    <el-dialog title="影片完整度" :visible.sync="dialogPerVisible">
+      <div slot="title">  <!--slot 插槽-->
+        <span>影片：<b style="color: #1d8ce0">{{chooseMediaName}}</b></span>
       </div>
-      <!--弹出框-->
-      <el-dialog title="影片完整度" :visible.sync="dialogPerVisible">
-        <div slot="title">  <!--slot 插槽-->
-          <span>影片：<b style="color: #1d8ce0">{{chooseMediaName}}</b></span>
-        </div>
-        <div ref="playCountPerDiv" id="playCountPer" style="height: 500px;">
-        </div>
-      </el-dialog>
-    </section>
+      <div ref="playCountPerDiv" id="playCountPer" style="height: 500px;">
+      </div>
+    </el-dialog>
+  </section>
 </template>
 <script>
 import { loadPlayCount, loadCPs, loadMediaPer } from '../../api/api'
@@ -170,11 +170,11 @@ export default {
     }
   },
   methods: {
-  /*  perDialgOpen(){   //初始 per div 对象
-      this.$nextTick(()=>{
-        this.myChartPer = document.getElementById('playCountPer')
-      })
-    }, */
+    /*  perDialgOpen(){   //初始 per div 对象
+          this.$nextTick(()=>{
+            this.myChartPer = document.getElementById('playCountPer')
+          })
+        }, */
     handleDetail ($index, row) {
       this.chooseMediaName = row.media_name
       // 请求后台
@@ -425,7 +425,7 @@ export default {
           formatter: '{a} <br/>{b}: {c} ({d}%)'
         }
       }
-      var myChartCp = echarts.init(document.getElementById('playCountPre_CP'), 'roma')
+      var myChartCp = echarts.init(document.getElementById('playCountPre_CP'))
       myChartCp.clear()
       myChartCp.setOption(option)
       window.onresize = myChartCp.resize // 适应图表
@@ -471,12 +471,13 @@ export default {
             data: this.playTimePrecTYPE
           }
         ], // 图
+        color: ['#749F83', '#D48265', '#61A0A8'],
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b}: {c} ({d}%)'
         }
       }
-      var myChartType = echarts.init(document.getElementById('playCountPre_TYPE'), 'shine')
+      var myChartType = echarts.init(document.getElementById('playCountPre_TYPE'))
       myChartType.clear()
       myChartType.setOption(option)
       window.onresize = myChartType.resize // 适应图表
@@ -500,6 +501,13 @@ export default {
         dataSer.push(item.value)
       })
       var option = {
+        color: ['#3398DB'],
+        toolbox: {
+          show: true,
+          feature: {
+            saveAsImage: { show: true }
+          }
+        },
         tooltip: {
           trigger: 'axis',
           axisPointer: { // 坐标轴指示器，坐标轴触发有效
@@ -516,8 +524,9 @@ export default {
           {
             type: 'category',
             data: dataX,
-            axisTick: {
-              alignWithLabel: true
+            axisLabel: {
+              interval: 0, // 横轴信息全部显示
+              rotate: -15// -15度角倾斜显示
             }
           }
         ],
@@ -545,8 +554,7 @@ export default {
               }
             }
           }
-        ],
-        color: ['#0e4ac9']
+        ]
       }
       var myChart = echarts.init(document.getElementById('playCountTop'))
       myChart.clear()
@@ -639,8 +647,8 @@ export default {
     border-radius: 4px;
   }
   .chart-container {
-      width: 100%;
-      float: left;
+    width: 100%;
+    float: left;
   }
   /*.chart div {
       height: 400px;

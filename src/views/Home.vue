@@ -161,10 +161,11 @@ export default {
   },
   data () {
     return {
-      sysName: 'BI管理系统',
+      sysName: ' MagicView',
       collapsed: false,
       sysUserName: '',
       sysUserImg: '',
+      sysIcon: '',
       selectedAppOption: [],
       appOptions: [{
         value: 'GS.CMCC',
@@ -185,6 +186,16 @@ export default {
         }, {
           value: 'HB.Telecom.Music',
           label: '音乐平台'
+        }]
+      }, {
+        value: 'SC.CMCC',
+        label: '四川移动',
+        children: [{
+          value: 'SC.CMCC.All',
+          label: '所有平台'
+        }, {
+          value: 'SC.CMCC.Children',
+          label: '少儿平台'
         }]
       }],
       tApp: '', //  当前产品视图
@@ -349,6 +360,7 @@ export default {
     this.selectedAppOption = [this.tApp.code.substring(0, this.tApp.code.lastIndexOf('.')), this.tApp.code] // 产品视图赋值
     // 用户头像
     this.sysUserImg = this.myForm.gender === 1 ? require('../assets/userM2.png') : require('../assets/userW.png')
+    this.sysIcon = require('../assets/sysIcon.png')
   }
 }
 </script>
