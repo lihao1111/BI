@@ -170,11 +170,11 @@ export default {
     }
   },
   methods: {
-    /*  perDialgOpen(){   //初始 per div 对象
-          this.$nextTick(()=>{
-            this.myChartPer = document.getElementById('playCountPer')
-          })
-        }, */
+    perDialgOpen () { // 初始 per div 对象
+      this.$nextTick(() => {
+        this.myChartPer = document.getElementById('playCountPer')
+      })
+    },
     handleDetail ($index, row) {
       this.chooseMediaName = row.media_name
       // 请求后台
@@ -356,15 +356,15 @@ export default {
             this.sumPlayCount += validCountNum
             this.avgCount += parseFloat(item.avgCount)
             // cp 占比数据
-            if (cpMap[cpName] === null) {
+            if (cpMap[cpName] == null) {
               cpMap[cpName] = 0
             }
             cpMap[cpName] += validCountNum
-            if (typeMap[typeName] === null) {
+            if (typeMap[typeName] == null) {
               typeMap[typeName] = 0
             }
             typeMap[typeName] += validCountNum
-            if (sumCountMap[mediaName] === null) {
+            if (sumCountMap[mediaName] == null) {
               sumCountMap[mediaName] = 0
             }
             sumCountMap[mediaName] += validCountNum
