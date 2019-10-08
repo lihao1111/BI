@@ -159,9 +159,9 @@ export default {
       }
       require.ensure([], () => {
         const { exportExcel } = require('../../excel/Export2Excel')
-        const tHeader = ['产品名称'].concat(this.tableCols)
+        const tHeader = ['日期', '产品ID', '产品名称', '总订购', '新用户订购', '老用户首次订购', '老用户再次订购', '退订发起']
         // 上面设置Excel的表格第一行的标题
-        const filterVal = ['display_name'].concat(this.tableCols)
+        const filterVal = ['day', 'product_id', 'product_name', 'newUordered_num', 'oldFirstUordered_num', 'oldNewReUordered_num', 'unSubscribed_num']
         // 上面的'day', 'hour', 'online_num'是tableData里对象的属性
         const list = this.tOrderList // 把data里的tableData存到list
         const data = this.formatJson(filterVal, list)

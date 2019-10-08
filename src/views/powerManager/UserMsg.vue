@@ -229,11 +229,10 @@ export default {
           this.chooseUserId = row.id
           this.chooseUserType = row.type
           this.expendAuthData = resultSet.map(item => item.id)
-          /* this.$nextTick(function () {
-            this.$refs.authUserTree.setCheckedKeys(this.expendAuthData)
-          }) */
           this.authFormVisible = true
-          this.$refs.authUserTree.setCheckedKeys(this.expendAuthData) // 采用这种方式进行checkedKey的赋值
+          this.$nextTick(function () {
+            this.$refs.authUserTree.setCheckedKeys(this.expendAuthData) // 采用这种方式进行checkedKey的赋值
+          })
         }
       })
     },

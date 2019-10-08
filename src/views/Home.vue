@@ -29,10 +29,11 @@
         </el-dropdown>
       </el-col>-->
       <el-col :span="9">
-        <label style="color: #606266; font-size: 16px; font-weight:bold;">产品视图：</label>
+        <label style="color: #606266; font-size: 16px; font-weight:bold;">产品：</label>
         <el-cascader
+            ref="prods"
             size="small"
-            style="width:180px;"
+            style="width:50%;"
             v-model="selectedAppOption"
             :options="appOptions"
             placeholder="请选择"

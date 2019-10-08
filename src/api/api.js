@@ -297,7 +297,36 @@ export const loadPromotionItemDtl = params => {
     .catch(function () { return { 'businessCode': 500 } })
 }
 export const exportPromotionItemDtl = params => {
-  return axios.post(`${base}/exportPromotionItemDtl`, qs.stringify(params))
+  return axios.post(`${base}/exportPromotionItemDtl`, qs.stringify(params), { responseType: 'blob' }) // { responseType: 'blob' } 真的很正要
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+export const loadDayDataDtl = params => {
+  return axios.post(`${base}/loadDayDataDtl`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+
+export const exportDayDataDtl = params => {
+  return axios.post(`${base}/exportDayDataDtl`, qs.stringify(params), { responseType: 'blob' })
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+
+export const loadCpInfoDtl = params => {
+  return axios.post(`${base}/loadCpInfoDtl`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+
+export const exportCpInfo = params => {
+  return axios.post(`${base}/exportCpInfo`, qs.stringify(params), { responseType: 'blob' })
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+
+export const loadCpTop = params => {
+  return axios.post(`${base}/loadCpTop`, qs.stringify(params))
     .then(res => res.data)
     .catch(function () { return { 'businessCode': 500 } })
 }

@@ -146,23 +146,16 @@ export default {
         endDate: this.queryDate[1],
         platFormId: this.tApp.id
       }).then(data => { // ?
+        let blob = new Blob([data], { type: 'application/vnd.ms-excel;charset=utf-8' });
+        let downloadElement = document.createElement('a');
+        let href = window.URL.createObjectURL(blob); //创建下载的链接
+        downloadElement.href = href;
+        downloadElement.download = `HBPromotion${this.moment(new Date()).format('YYYY/MM/DD')}.xlsx`; //下载后文件名
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); //点击下载
+        document.body.removeChild(downloadElement); //下载完成移除元素
+        window.URL.revokeObjectURL(href); //释放掉blob对象
         loading.close()
-        let { businessCode, description } = data
-        if (businessCode === 'unauthenticated') { // 有权限认证
-          this.$message({
-            message: '未授权，请联系管理员！',
-            type: 'error'
-          })
-          return false
-        }
-        if (businessCode !== 'success') {
-          this.$message({
-            message: '推荐位数据加载失败，请联系管理员！',
-            type: 'error'
-          })
-        } else {
-          window.location.href = description
-        }
       })
     }
   },

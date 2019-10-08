@@ -101,15 +101,18 @@ export default new Router({
         { path: 'authMsg', component: () => import('./views/powerManager/AuthMsg.vue'), name: '权限管理', meta: { title: '权限管理', keepAlive: false } }
       ]
     },
-    /* {
+    {
       path: '/',
       component: () => import('./views/Home.vue'),
-      name: '河北音乐支撑',
+      name: '河北音乐报表',
       iconCls: 'el-icon-star-on', // 图标样式class
       children: [
-        { path: 'hbMusicMsg', component: () => import('./views/hbMusicManager/HBMusicMsg.vue'), name: '推荐位详情', meta: { title: '河北音乐支撑', keepAlive: false } }
+        { path: 'hbMusicPromotionMsg', component: () => import('./views/hbMusicManager/HBMusicPromotionMsg.vue'), name: '推荐位详情', meta: { title: '推荐位详情', keepAlive: false } },
+        { path: 'hbMusicDayDataMsg', component: () => import('./views/hbMusicManager/HBMusicDayDataMsg.vue'), name: '日报表数据', meta: { title: '日报表数据', keepAlive: false } },
+        { path: 'hbMusiCpInfoMsg', component: () => import('./views/hbMusicManager/HBMusicCpInfoMsg.vue'), name: 'CP基础数据', meta: { title: 'CP基础数据', keepAlive: false } },
+        { path: 'hbMusiCpTopMsg', component: () => import('./views/hbMusicManager/HBMusicCpTopMsg.vue'), name: 'CP播放排行', meta: { title: 'CP播放排行', keepAlive: false } }
       ]
-    }, */
+    },
     {
       path: '*',
       hidden: true,
