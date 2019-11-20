@@ -237,6 +237,8 @@ export default {
       })
     },
     authSubmit () { // 授权提交
+      console.log(this.loginUser.type)
+      console.log(this.chooseUserType)
       if (parseInt(this.loginUser.type) <= parseInt(this.chooseUserType)) {
         this.$message({
           message: '授权失败，授权人权限不足！',

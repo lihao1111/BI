@@ -283,9 +283,12 @@ export default {
         // 上面的'day', 'hour', 'online_num'是tableData里对象的属性
         const list = this.playTimeList // 把data里的tableData存到list
         const data = this.formatJson(filterVal, list)
-        exportExcel(tHeader, data, '列表excel')
+        exportExcel(tHeader, data, '播放时长excel')
       })
-    }
+    },
+    formatJson (filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]))
+    },
   },
   created: function () {
     this.tApp = JSON.parse(sessionStorage.getItem('tApp'))

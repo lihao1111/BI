@@ -215,7 +215,7 @@ export default {
             type: 'shadow'
           }
         },
-        color: ['#3398DB']
+        color: ['#3F77FE']
       }
       this.chartColumn = echarts.init(document.getElementById('orderTrigDiv'))
       this.chartColumn.clear()

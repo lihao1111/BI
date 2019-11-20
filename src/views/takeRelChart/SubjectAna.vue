@@ -23,10 +23,10 @@
                     <el-button type="primary " size="small" icon="el-icon-search" v-on:click="getSubjectList">查询</el-button>
                 </el-form-item>
                 <el-radio-group v-model="chooseType" size="small" @change="chooseTypeVal" style="float: right; margin-top: 5px; margin-right: 10px">
-                    <el-radio-button label="day">日</el-radio-button>
-                <!--    <el-radio-button label="week">周</el-radio-button>
-                    <el-radio-button label="month">月</el-radio-button>-->
-                </el-radio-group>
+              <el-radio-button label="day">日</el-radio-button>
+              <!--    <el-radio-button label="week">周</el-radio-button>
+                  <el-radio-button label="month">月</el-radio-button>-->
+            </el-radio-group>
             </el-form>
         </el-col>
         <el-col :span="24" style="position: relative;">

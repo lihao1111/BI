@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
   <section class="chart-container">
     <!--工具条-->
@@ -19,17 +20,12 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary " size="small" icon="el-icon-search" v-on:click="getActiveUser()">查询</el-button>
+          <el-button type="primary " size="small" icon="el-icon-search" v-on:click="getOrderEnter">查询</el-button>
         </el-form-item>
-        <el-radio-group v-model="chooseType" size="small" @change="chooseTypeVal" style="float: right; margin-top: 5px; margin-right: 10px">
-          <el-radio-button label="day">日</el-radio-button>
-          <el-radio-button label="week">周</el-radio-button>
-          <el-radio-button label="month">月</el-radio-button>
-        </el-radio-group>
       </el-form>
     </el-col>
-    <el-col :span="24" style="position: relative;">
-      <div id="activeUserDiv" style="width:100%; height:500px; margin-top: 10px; z-index: 1000" v-loading="chartLoading"></div>
+    <el-col :span="24">
+      <div id="orderEnterDiv" style="width:100%; height:380px; text-align: center" v-loading="chartLoading"></div>
     </el-col>
     <div style="padding: 0px 10px;">
       <el-col :span="24" style=" margin-top: 10px; height: 40px; line-height: 40px; background-color: rgba(17, 146, 175, 0.18);">
@@ -38,26 +34,26 @@
           导出数据
         </el-link>
       </el-col>
-      <el-table :data="tActiveUserList" highlight-current-row style="width:100%;"
+      <el-table :data="orderEnterList" highlight-current-row style="width:100%;"
                 :header-cell-style="{
                   'background-color': '#f2f2f2',
                   'color': '#3a8ee6',
                   'border-bottom': '1px #f2f2f2 solid'
-                  }"
+                }"
       >
-        <el-table-column prop="day" sortable label="日期" align="center"></el-table-column>
-        <el-table-column prop="uv" sortable label="UV" align="center"></el-table-column>
+        <el-table-column prop="day" label="日期" align="center" :formatter="formaterText"></el-table-column>
+        <el-table-column prop="uv" sortable label="订购页到达数" align="center"></el-table-column>
       </el-table>
     </div>
   </section>
 </template>
 <script>
-import { loadActiveUser } from '../../api/api'
+import { loadOrderEnter } from '../../api/api'
 import echarts from 'echarts'
 export default {
   data () {
     return {
-      queryDate: [new Date(new Date().getTime() - 8 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
+      queryDate: [new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
       pickerOptions: { // 快捷键日期设置
         disabledDate (time) {
           return time.getTime() > Date.now()
@@ -80,24 +76,24 @@ export default {
           }
         }]
       },
-      tApp: '',
-      tActiveUserList: [], // 表格数据
-      chooseType: '',
       chartLoading: false,
-      activeUserList: [], // 请求数据
-      dataLegStr: [], // 绘图数据_Leg
-      dataX: [], // 绘图数据_X
-      dataY: [] // 绘图数据_Y
+      tApp: '',
+      orderEnterList: [], // 请求数据
+      drawDatas: []
     }
   },
   methods: {
-    chooseTypeVal: function (val) {
-      this.chooseType = val
-      this.getActiveUser()
+    formaterText (row, column, cellValue) {
+      var retVal = ''
+      if (cellValue === null || cellValue === 'null') {
+        retVal = '暂无'
+      } else {
+        retVal = cellValue.toString()
+      }
+      return retVal
     },
-    // 导出
     handleExport () {
-      if (this.tActiveUserList.length === 0) {
+      if (this.orderEnterList.length === 0) {
         this.$message({
           message: '表格无数据，导出异常！',
           type: 'warning'
@@ -106,18 +102,19 @@ export default {
       }
       require.ensure([], () => {
         const { exportExcel } = require('../../excel/Export2Excel')
-        const tHeader = ['日期', 'uv']
+        const tHeader = ['日期', '订购页到达数']
         // 上面设置Excel的表格第一行的标题
         const filterVal = ['day', 'uv']
-        const list = this.tActiveUserList // 把data里的tableData存到list
+        // 上面的'day', 'hour', 'online_num'是tableData里对象的属性
+        const list = this.orderEnterList // 把data里的tableData存到list
         const data = this.formatJson(filterVal, list)
-        exportExcel(tHeader, data, '用户活跃excel')
+        exportExcel(tHeader, data, '订购到达excel')
       })
     },
     formatJson (filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => v[j]))
     },
-    getActiveUser: function () {
+    getOrderEnter: function () {
       if (!this.queryDate) {
         this.$message({
           showClose: true,
@@ -135,7 +132,11 @@ export default {
         return false
       }
       this.chartLoading = true
-      loadActiveUser({ startDate: this.queryDate[0], endDate: this.queryDate[1], platFormId: this.tApp.id, type: this.chooseType }).then(data => { // ?
+      loadOrderEnter({
+        startDate: this.queryDate[0],
+        endDate: this.queryDate[1],
+        platFormId: this.tApp.id
+      }).then(data => { // ?
         let { businessCode, resultSet } = data
         this.chartLoading = false
         if (businessCode === 'unauthenticated') { // 有权限认证
@@ -147,89 +148,82 @@ export default {
         }
         if (businessCode !== 'success') {
           this.$message({
-            message: '活跃用户数据加载失败，请联系管理员！',
+            message: '订购页到达统计失败，请联系管理员！',
             type: 'error'
           })
         } else {
-          this.tActiveUserList = resultSet // 表格数据
-          this.activeUserList = [...this.tActiveUserList].reverse() // 该方法会改变原来的数组，而不会创建新的数组
-          if (this.chooseType === 'week') {
-            this.activeUserList.forEach(item => {
-              item.day = this.moment(item.day).day(-6).format('YYYY-MM-DD') + '至' + item.day
-            })
-          } else if (this.chooseType === 'month') {
-            this.activeUserList.forEach(item => {
-              item.day = this.moment(item.day).format('YYYY-MM')
-            })
-          }
-          this.CoreChart(this.chooseType)
+          this.orderEnterList = resultSet
+          this.drawDatas = this.orderEnterList
+          this.drawOrderChart()
         }
       })
     },
-    CoreChart: function () {
-      // 整理数据
-      this.dataY = []
-      this.dataLegStr = ['UV']
-      this.dataX = []
-      var loginCountArr = []
-      for (let k in this.activeUserList) {
-        this.dataX.push(this.activeUserList[k].day)
-        loginCountArr.push(this.activeUserList[k].uv)
-      }
-      const map = {}
-      map['name'] = 'UV'
-      map['barWidth'] = 60
-      map['type'] = 'bar'
-      map['label'] = { 'normal': {
-        'show': true
-      } }
-      map['data'] = loginCountArr
-      this.dataY.push(map)
-      this.showCharts(this.dataLegStr, this.dataX, this.dataY)
-    },
-    showCharts: function (_dataLeg, _dataX, _dataY) {
+    drawOrderChart: function () {
+      var dataX = []
+      var dataV = []
+      this.drawDatas.forEach(item => {
+        dataX.push(item.day)
+        dataV.push(item.uv)
+      })
       var option = { // 核心数据 数据展示
         border: false,
-        legend: {
-          orient: 'vertical',
-          left: 'center',
-          bottom: 'bottom',
-          data: _dataLeg
+        toolbox: {
+          show: true,
+          feature: {
+            saveAsImage: { show: true }
+          }
         },
-        grid: {
-          left: '3%',
-          right: '5%',
-          bottom: '10%',
-          containLabel: true
+        legend: {
+          data: ['订购触发']
+        },
+        label: {
+          show: true, // 开启显示
+          position: 'top', // 在上方显示
+          textStyle: { // 数值样式
+            color: 'black',
+            fontSize: 16,
+            fontWeight: 600
+          }
         },
         xAxis: {
-          data: _dataX,
-          name: '日期',
-          axisLine: { onZero: true },
-          splitLine: { show: false },
-          splitArea: { show: false }
+          type: 'category',
+          data: dataX,
+          axisLabel: {
+            interval: 0, // 横轴信息全部显示
+          }
         },
-        yAxis: { // 纵坐标
-          splitArea: { show: false }
+        yAxis: {
+          type: 'value'
         },
-        series: _dataY // 图
+        series: [{
+          name: '订购页到达数',
+          barWidth: 60,
+          data: dataV,
+          type: 'bar'
+        }],
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        color: ['#3F77FE']
       }
-      this.chartColumn = echarts.init(document.getElementById('activeUserDiv'))
+      this.chartColumn = echarts.init(document.getElementById('orderEnterDiv'))
       this.chartColumn.clear()
       this.chartColumn.setOption(option)
       window.onresize = this.chartColumn.resize // 适应图表
     }
   },
   created: function () {
+    // 展示数据
     this.tApp = JSON.parse(sessionStorage.getItem('tApp'))
-    this.chooseType = 'day' // 默认设置 天
-    this.getActiveUser()
+    this.getOrderEnter()
   },
   mounted: function () {
   },
   updated: function () {
   }
-
 }
 </script>
 <style>

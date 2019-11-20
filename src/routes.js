@@ -62,6 +62,7 @@ export default new Router({
         /* { path: 'orderAna', component: () => import('./views/orderAna/OrderAna.vue'), name: '订购/退订', meta: { keepAlive: true } }, */
         { path: 'OrderDetail', component: () => import('./views/orderAna/OrderDetail.vue'), name: '订购/退订', meta: { title: '订购/退订', keepAlive: true } },
         { path: 'orderSource', component: () => import('./views/orderAna/OrderSource.vue'), name: '订购来源分析', meta: { title: '订购来源分析', keepAlive: true } },
+        { path: 'OrderEnter', component: () => import('./views/orderAna/OrderEnter.vue'), name: '订购到达统计', meta: { title: '订购到达统计', keepAlive: true } },
         { path: 'OrderTrigTop', component: () => import('./views/orderAna/OrderTrigTop.vue'), name: '订购触发排行', meta: { title: '订购触发排行', keepAlive: true } }
         /* { path: 'OrderFailAna', component: () => import('./views/orderAna/OrderFailAna.vue'), name: '订购失败分析', meta: { title: '订购失败分析', keepAlive: true } } */
       ]
@@ -73,6 +74,7 @@ export default new Router({
       iconCls: 'el-icon-picture-outline-round',
       children: [
         { path: 'newAddUser', component: () => import('./views/userRelChart/NewAddUser.vue'), name: '用户新增留存', meta: { title: '用户新增留存', keepAlive: true } },
+        { path: 'loginUser', component: () => import('./views/userRelChart/LoginUser.vue'), name: '用户登录', meta: { title: '用户登录', keepAlive: true } },
         { path: 'activeUser', component: () => import('./views/userRelChart/ActiveUser.vue'), name: '用户活跃', meta: { title: '用户活跃', keepAlive: true } },
         { path: 'useTime', component: () => import('./views/userRelChart/UseTime.vue'), name: '用户使用时长', meta: { title: '用户使用时长', keepAlive: true } },
         { path: 'playTime', component: () => import('./views/userRelChart/PlayTime.vue'), name: '用户播放时长', meta: { title: '用户播放时长', keepAlive: true } }

@@ -19,17 +19,18 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary " size="small" icon="el-icon-search" v-on:click="getActiveUser()">查询</el-button>
+          <el-button type="primary " size="small" icon="el-icon-search" v-on:click="getLoginUser()">查询</el-button>
         </el-form-item>
-        <el-radio-group v-model="chooseType" size="small" @change="chooseTypeVal" style="float: right; margin-top: 5px; margin-right: 10px">
-          <el-radio-button label="day">日</el-radio-button>
-          <el-radio-button label="week">周</el-radio-button>
-          <el-radio-button label="month">月</el-radio-button>
-        </el-radio-group>
       </el-form>
     </el-col>
     <el-col :span="24" style="position: relative;">
-      <div id="activeUserDiv" style="width:100%; height:500px; margin-top: 10px; z-index: 1000" v-loading="chartLoading"></div>
+      <div style="position: absolute; z-index: 1001; top:10px; right: 10px;">
+        <el-radio-group v-model="seledVal" size="small" @change="chooseValChart">
+          <el-radio-button label="login_uv">登录用户</el-radio-button>
+          <el-radio-button label="login_num">登录次数</el-radio-button>
+        </el-radio-group>
+      </div>
+      <div id="loginUserDiv" style="width:100%; height:500px; margin-top: 10px; z-index: 1000" v-loading="chartLoading"></div>
     </el-col>
     <div style="padding: 0px 10px;">
       <el-col :span="24" style=" margin-top: 10px; height: 40px; line-height: 40px; background-color: rgba(17, 146, 175, 0.18);">
@@ -46,13 +47,26 @@
                   }"
       >
         <el-table-column prop="day" sortable label="日期" align="center"></el-table-column>
-        <el-table-column prop="uv" sortable label="UV" align="center"></el-table-column>
+        <el-table-column prop="login_uv" sortable label="登录用户" align="center"></el-table-column>
+        <el-table-column prop="login_new" sortable label="新用户登录" align="center"></el-table-column>
+        <el-table-column prop="login_old" sortable label="老用户登录" align="center"></el-table-column>
+        <el-table-column prop="login_num" sortable label="登录次数" align="center"></el-table-column>
+        <el-table-column prop="loginNewPrec" label="新用户占比" align="center">
+          <template slot-scope="scope">
+            <span style="color: #1d8ce0; font-weight: bold">{{ scope.row.loginNewPrec == null ? '' : scope.row.loginNewPrec+'%' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="loginOldPrec" label="老用户占比" align="center">
+          <template slot-scope="scope">
+            <span style="color: #1d8ce0; font-weight: bold">{{ scope.row.loginOldPrec == null ? '' : scope.row.loginOldPrec+'%' }}</span>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
   </section>
 </template>
 <script>
-import { loadActiveUser } from '../../api/api'
+import { loadLoginUser } from '../../api/api'
 import echarts from 'echarts'
 export default {
   data () {
@@ -80,10 +94,10 @@ export default {
           }
         }]
       },
+      chartLoading: false,
       tApp: '',
       tActiveUserList: [], // 表格数据
-      chooseType: '',
-      chartLoading: false,
+      seledVal: '', // 选择项
       activeUserList: [], // 请求数据
       dataLegStr: [], // 绘图数据_Leg
       dataX: [], // 绘图数据_X
@@ -91,10 +105,6 @@ export default {
     }
   },
   methods: {
-    chooseTypeVal: function (val) {
-      this.chooseType = val
-      this.getActiveUser()
-    },
     // 导出
     handleExport () {
       if (this.tActiveUserList.length === 0) {
@@ -106,18 +116,18 @@ export default {
       }
       require.ensure([], () => {
         const { exportExcel } = require('../../excel/Export2Excel')
-        const tHeader = ['日期', 'uv']
+        const tHeader = ['日期', '登录用户', '新用户登录', '老用户登录', '登录次数', '新用户占比', '老用户占比']
         // 上面设置Excel的表格第一行的标题
-        const filterVal = ['day', 'uv']
+        const filterVal = ['day', 'login_uv', 'login_new', 'login_old', 'login_num', 'loginNewPrec', 'loginOldPrec']
         const list = this.tActiveUserList // 把data里的tableData存到list
         const data = this.formatJson(filterVal, list)
-        exportExcel(tHeader, data, '用户活跃excel')
+        exportExcel(tHeader, data, '用户登录excel')
       })
     },
     formatJson (filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => v[j]))
     },
-    getActiveUser: function () {
+    getLoginUser: function () {
       if (!this.queryDate) {
         this.$message({
           showClose: true,
@@ -134,8 +144,17 @@ export default {
         })
         return false
       }
+      var interval = (new Date(this.queryDate[1]).getTime() - new Date(this.queryDate[0]).getTime()) / (24 * 60 * 60 * 1000)
+      if (interval > 31) {
+        this.$message({
+          showClose: true,
+          message: '日期范围过大，不建议操作',
+          type: 'warning'
+        })
+        return false
+      }
       this.chartLoading = true
-      loadActiveUser({ startDate: this.queryDate[0], endDate: this.queryDate[1], platFormId: this.tApp.id, type: this.chooseType }).then(data => { // ?
+      loadLoginUser({ startDate: this.queryDate[0], endDate: this.queryDate[1], platFormId: this.tApp.id }).then(data => { // ?
         let { businessCode, resultSet } = data
         this.chartLoading = false
         if (businessCode === 'unauthenticated') { // 有权限认证
@@ -147,47 +166,80 @@ export default {
         }
         if (businessCode !== 'success') {
           this.$message({
-            message: '活跃用户数据加载失败，请联系管理员！',
+            message: '登录用户数据加载失败，请联系管理员！',
             type: 'error'
           })
         } else {
           this.tActiveUserList = resultSet // 表格数据
+          /*  this.activeUserList = resultSet // 图表数据 */
           this.activeUserList = [...this.tActiveUserList].reverse() // 该方法会改变原来的数组，而不会创建新的数组
-          if (this.chooseType === 'week') {
-            this.activeUserList.forEach(item => {
-              item.day = this.moment(item.day).day(-6).format('YYYY-MM-DD') + '至' + item.day
-            })
-          } else if (this.chooseType === 'month') {
-            this.activeUserList.forEach(item => {
-              item.day = this.moment(item.day).format('YYYY-MM')
-            })
-          }
-          this.CoreChart(this.chooseType)
+          this.seledVal = 'login_uv' // 设置默认值
+          this.CoreChart(this.seledVal)
         }
       })
     },
+    // 切换 条件 图表
+    chooseValChart: function (val) {
+      this.seledVal = val
+      this.CoreChart()
+    },
+    // 整理数据
     CoreChart: function () {
       // 整理数据
       this.dataY = []
-      this.dataLegStr = ['UV']
+      this.dataLegStr = []
       this.dataX = []
-      var loginCountArr = []
-      for (let k in this.activeUserList) {
-        this.dataX.push(this.activeUserList[k].day)
-        loginCountArr.push(this.activeUserList[k].uv)
+      if (this.seledVal === 'login_uv') {
+        this.dataLegStr = ['新用户登录', '老用户登录']
+        var newLoginArr = []
+        var oldLoginArr = []
+        for (let k in this.activeUserList) {
+          this.dataX.push(this.activeUserList[k].day)
+          newLoginArr.push(this.activeUserList[k].login_new)
+          oldLoginArr.push(this.activeUserList[k].login_old)
+        }
+        var map = {}
+        map['name'] = '新用户登录'
+        map['barWidth'] = 60
+        map['type'] = 'bar'
+        map['stack'] = '总量'
+        map['label'] = { 'normal': {
+          'show': true
+        } }
+        map['data'] = newLoginArr
+        this.dataY.push(map)
+        map = {}
+        map['name'] = '老用户登录'
+        map['barWidth'] = 60
+        map['type'] = 'bar'
+        map['stack'] = '总量'
+        map['label'] = { 'normal': {
+          'show': true
+        } }
+        map['data'] = oldLoginArr
+        this.dataY.push(map)
+      } else if (this.seledVal === 'login_num') {
+        this.dataLegStr = ['登录次数']
+        var loginCountArr = []
+        for (let k in this.activeUserList) {
+          this.dataX.push(this.activeUserList[k].day)
+          loginCountArr.push(this.activeUserList[k].login_num)
+        }
+        map = {}
+        map['name'] = '登录次数'
+        map['barWidth'] = 60
+        map['type'] = 'bar'
+        map['stack'] = '总量'
+        map['label'] = { 'normal': {
+          'show': true
+        } }
+        map['data'] = loginCountArr
+        this.dataY.push(map)
       }
-      const map = {}
-      map['name'] = 'UV'
-      map['barWidth'] = 60
-      map['type'] = 'bar'
-      map['label'] = { 'normal': {
-        'show': true
-      } }
-      map['data'] = loginCountArr
-      this.dataY.push(map)
       this.showCharts(this.dataLegStr, this.dataX, this.dataY)
     },
     showCharts: function (_dataLeg, _dataX, _dataY) {
+      var that = this // 转一下
       var option = { // 核心数据 数据展示
         border: false,
         legend: {
@@ -212,9 +264,31 @@ export default {
         yAxis: { // 纵坐标
           splitArea: { show: false }
         },
-        series: _dataY // 图
+        series: _dataY, // 图
+        tooltip: {
+          trigger: 'axis',
+          formatter: function (datas) {
+            var len = datas.length
+            var ress = ''
+            var sumNum = 0
+            var sumStr = ''
+            for (var k = 0; k < len; k++) {
+              var res = datas[k].name + '<br/>' + datas[k].seriesName + ':' + datas[k].data
+              ress += res + '<br/>'
+              sumNum += datas[k].data
+              sumStr = datas[k].name
+            }
+            if (that.seledVal === 'login_uv') {
+              ress += sumStr + '<br/>' + '总量:' + sumNum
+            }
+            return ress
+          },
+          axisPointer: {
+            type: 'shadow'
+          }
+        }
       }
-      this.chartColumn = echarts.init(document.getElementById('activeUserDiv'))
+      this.chartColumn = echarts.init(document.getElementById('loginUserDiv'))
       this.chartColumn.clear()
       this.chartColumn.setOption(option)
       window.onresize = this.chartColumn.resize // 适应图表
@@ -222,8 +296,7 @@ export default {
   },
   created: function () {
     this.tApp = JSON.parse(sessionStorage.getItem('tApp'))
-    this.chooseType = 'day' // 默认设置 天
-    this.getActiveUser()
+    this.getLoginUser()
   },
   mounted: function () {
   },

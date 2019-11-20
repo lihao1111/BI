@@ -157,6 +157,13 @@ export const loadOrderSource = params => {
     .catch(function () { return { 'businessCode': 500 } })
 }
 
+// 订购页到达数统计
+export const loadOrderEnter = params => {
+  return axios.post(`${base}/loadOrderEnter`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+
 export const loadOrderTrig = params => {
   return axios.post(`${base}/loadOrderTrig`, qs.stringify(params))
     .then(res => res.data)
@@ -168,12 +175,19 @@ export const loadNewAddUser = params => {
     .then(res => res.data)
     .catch(function () { return { 'businessCode': 500 } })
 }
+// 用户登录
+export const loadLoginUser = params => {
+  return axios.post(`${base}/loadLoginUser`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
 // 用户活跃
 export const loadActiveUser = params => {
   return axios.post(`${base}/loadActiveUser`, qs.stringify(params))
     .then(res => res.data)
     .catch(function () { return { 'businessCode': 500 } })
 }
+
 // 用户使用时长
 export const loadUseTime = params => {
   return axios.post(`${base}/loadUseTime`, qs.stringify(params))
