@@ -22,6 +22,11 @@
         <el-form-item>
           <el-button type="primary " size="small" icon="el-icon-search" v-on:click="getOrderEnter">查询</el-button>
         </el-form-item>
+        <el-radio-group v-model="chooseType" size="small" @change="chooseTypeVal" style="float: right; margin-top: 5px; margin-right: 10px">
+          <el-radio-button label="day">日</el-radio-button>
+          <el-radio-button label="week">周</el-radio-button>
+          <el-radio-button label="month">月</el-radio-button>
+        </el-radio-group>
       </el-form>
     </el-col>
     <el-col :span="24">
@@ -46,7 +51,7 @@
       </el-table>
     </div>
   </section>
-</template>
+</template>loadOrderEnter
 <script>
 import { loadOrderEnter } from '../../api/api'
 import echarts from 'echarts'
@@ -79,10 +84,15 @@ export default {
       chartLoading: false,
       tApp: '',
       orderEnterList: [], // 请求数据
-      drawDatas: []
+      drawDatas: [],
+      chooseType: ''
     }
   },
   methods: {
+    chooseTypeVal: function (val) {
+      this.chooseType = val
+      this.getOrderEnter()
+    },
     formaterText (row, column, cellValue) {
       var retVal = ''
       if (cellValue === null || cellValue === 'null') {
@@ -135,7 +145,8 @@ export default {
       loadOrderEnter({
         startDate: this.queryDate[0],
         endDate: this.queryDate[1],
-        platFormId: this.tApp.id
+        platFormId: this.tApp.id,
+        type: this.chooseType
       }).then(data => { // ?
         let { businessCode, resultSet } = data
         this.chartLoading = false
@@ -153,7 +164,7 @@ export default {
           })
         } else {
           this.orderEnterList = resultSet
-          this.drawDatas = this.orderEnterList
+          this.drawDatas = [...this.orderEnterList].reverse()
           this.drawOrderChart()
         }
       })
@@ -218,6 +229,7 @@ export default {
   created: function () {
     // 展示数据
     this.tApp = JSON.parse(sessionStorage.getItem('tApp'))
+    this.chooseType = 'day' // 默认设置 天
     this.getOrderEnter()
   },
   mounted: function () {

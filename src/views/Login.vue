@@ -118,7 +118,7 @@ export default {
           })
         } else {
           // 产品视图存放在session
-          let apps = resultSet.filter(item => item.id === 5 || item.id === 14 || item.id === 11) // GS.CMCC  || HB.CTCC ||SC.CMCC
+          let apps = resultSet.filter(item => item.id === 5 || item.id === 14 || item.id === 11 || item.id === 18) // GS.CMCC  || HB.CTCC ||SC.CMCC
           sessionStorage.setItem('apps', JSON.stringify(apps))
           sessionStorage.setItem('tApp', JSON.stringify(apps[1])) // 默认设置第一个产品视图
           // 跳转dashboard

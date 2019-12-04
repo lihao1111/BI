@@ -177,6 +177,9 @@ export default {
         }, {
           value: 'GS.CMCC.Children',
           label: '少儿平台'
+        }, {
+          value: 'GS.CMCC.Edu',
+          label: '教育平台'
         }]
       }, {
         value: 'HB.Telecom',
@@ -280,7 +283,6 @@ export default {
         this.tApp = appArr[0]
         // 更新App 以及session中的 App
         sessionStorage.setItem('tApp', JSON.stringify(this.tApp))
-        console.log(this.tApp)
         // 切换App 不再强制刷新页面  this.$router.go(0) 而是本页面加载
         // this.$bus.$emit('changeAppss', this.tApp) 切换App 方案二 触发父组件的自定义事件
         this.reload() // 调用依赖函数
