@@ -46,13 +46,13 @@
               <span style="color: #1d8ce0; font-weight: bold">{{ scope.row.avgtime == null ? '' : scope.row.avgtime+'分钟' }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="tim0_1" label="1分钟以下" align="left"></el-table-column>
-          <el-table-column prop="tim1_3" label="1-3分钟" align="left"></el-table-column>
-          <el-table-column prop="tim3_10" label="4-10分钟" align="left"></el-table-column>
-          <el-table-column prop="tim10_30" label="11-30分钟" align="left"></el-table-column>
-          <el-table-column prop="tim30_60" label="31-60分钟" align="left"></el-table-column>
-          <el-table-column prop="tim60_120" label="60-120分钟" align="left"></el-table-column>
-          <el-table-column prop="tim120" label="120分钟以上" align="left"></el-table-column>
+          <el-table-column prop="tim0_1" label="1分钟以下（人数）" align="left"></el-table-column>
+          <el-table-column prop="tim1_3" label="1-3分钟（人数）" align="left"></el-table-column>
+          <el-table-column prop="tim3_10" label="4-10分钟（人数）" align="left"></el-table-column>
+          <el-table-column prop="tim10_30" label="11-30分钟（人数）" align="left"></el-table-column>
+          <el-table-column prop="tim30_60" label="31-60分钟（人数）" align="left"></el-table-column>
+          <el-table-column prop="tim60_120" label="60-120分钟（人数）" align="left"></el-table-column>
+          <el-table-column prop="tim120" label="120分钟以上（人数）" align="left"></el-table-column>
         </el-table>
       </div>
     </section>

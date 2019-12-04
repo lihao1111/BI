@@ -44,12 +44,12 @@
           <label style="display: block;padding-top: 40px;font-weight:bold; font-size: 30px; padding-bottom: 5px;">
             {{sumPlayCount | formaterNumber}}
           </label>
-          <em style="padding: 0px 10px;border-radius:5px; box-shadow:rgba(255,255,255,.5) 0px 0px 10px 5px;background:#295991;color:#fff">总播放次数</em>
+          <em style="padding: 0px 10px;border-radius:5px; box-shadow:rgba(255,255,255,.5) 0px 0px 10px 5px;background:#295991;color:#fff">总有效播放次数</em>
         </div>
         <label style="display: block;padding-top: 70px;font-weight:bold; font-size: 30px; padding-bottom: 5px;">
           {{avgCount.toFixed(2)}}
         </label>
-        <em style="padding: 0px 10px;border-radius:5px; box-shadow:rgba(255,255,255,.5) 0px 0px 10px 5px;background:#295991;color:#fff">人均播放次数</em>
+        <em style="padding: 0px 10px;border-radius:5px; box-shadow:rgba(255,255,255,.5) 0px 0px 10px 5px;background:#295991;color:#fff">人均有效播放次数</em>
       </el-card>
     </el-col>
     <el-col :span="12" style="padding-top: 20px; padding-right: 15px">
