@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-let base = '/api' // 生产环境配置  开发环境 使用代理转发 配置围 /api
+let base = '' // 生产环境配置  开发环境 使用代理转发 配置围 /api
 axios.defaults.timeout = 50000 // 响应时间
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8' // 请求头
 //  登录
@@ -206,6 +206,20 @@ export const loadPlayCount = params => {
     .then(res => res.data)
     .catch(function () { return { 'businessCode': 500 } })
 }
+// 内容所有播放次数
+export const loadAllPlayCount = params => {
+  return axios.post(`${base}/loadAllPlayCount`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+
+// 内容完整播放次数导出数据
+export const exportAllPlayCountDtl = params => {
+  return axios.post(`${base}/exportAllPlayCount`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
+
 // 加载CP数据
 export const loadCPs = params => {
   return axios.post(`${base}/loadCPs`, qs.stringify(params))

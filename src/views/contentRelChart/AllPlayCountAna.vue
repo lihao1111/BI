@@ -20,7 +20,7 @@
             </el-date-picker>
           </div>
         </el-form-item>
-        <el-form-item label="内容类型：">
+       <!-- <el-form-item label="内容类型：">
           <el-select v-model="contentType" size="small" style="width: 160px" clearable placeholder="请选择内容类型">
             <el-option v-for="type in typeMapArr" :label="type.name" :value="type.id" :key="type.id"></el-option>
           </el-select>
@@ -29,7 +29,7 @@
           <el-select v-model="contentCP" size="small" style="width: 160px" clearable placeholder="请选择CP">
             <el-option v-for="cp in cps" :key="cp.id" :value="cp.id" :label="cp.name"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="内容名称：">
           <el-input v-model="contentKey" size="small" style="width: 180px"></el-input>
         </el-form-item>
@@ -38,28 +38,8 @@
         </el-form-item>
       </el-form>
     </el-col>
-    <el-col :span="4" style="padding-top: 20px; padding-right: 15px;">
-      <el-card shadow="always" style="height: 320px;text-align:center;">
-        <div>
-          <label style="display: block;padding-top: 40px;font-weight:bold; font-size: 30px; padding-bottom: 5px;">
-            {{sumPlayCount | formaterNumber}}
-          </label>
-          <em style="padding: 0px 10px;border-radius:5px; box-shadow:rgba(255,255,255,.5) 0px 0px 10px 5px;background:#295991;color:#fff">总有效播放次数</em>
-        </div>
-        <label style="display: block;padding-top: 70px;font-weight:bold; font-size: 30px; padding-bottom: 5px;">
-          {{avgCount.toFixed(2)}}
-        </label>
-        <em style="padding: 0px 10px;border-radius:5px; box-shadow:rgba(255,255,255,.5) 0px 0px 10px 5px;background:#295991;color:#fff">人均有效播放次数</em>
-      </el-card>
-    </el-col>
-    <el-col :span="12" style="padding-top: 20px; padding-right: 15px">
-      <div id="playCountPre_CP" class="likeCard"></div>
-    </el-col>
-    <el-col :span="8" style="padding-top: 20px;">
-      <div id="playCountPre_TYPE" class="likeCard"></div>
-    </el-col>
     <el-col :span="24">
-      <div id="playCountTop" style="width:100%; height:550px;" v-loading="chartLoading"></div>
+      <div id="allPlayCountTop" style="width:100%; height:550px;" v-loading="chartLoading"></div>
     </el-col>
     <div style="padding: 0px 10px;">
       <el-col :span="24" style=" margin-top: 10px; height: 40px; line-height: 40px; background-color: rgba(17, 146, 175, 0.18);">
@@ -68,7 +48,7 @@
           导出数据
         </el-link>
       </el-col>
-      <el-table :data="tPlayTimeList.slice((curpage-1) * pageSize, curpage * pageSize)" highlight-current-row style="width:100%;"
+      <el-table :data="tAllPlayTimeList.slice((curpage-1) * pageSize, curpage * pageSize)" highlight-current-row style="width:100%;"
                 :header-cell-style="{
                   'background-color': '#f2f2f2',
                   'color': '#3a8ee6',
@@ -80,8 +60,8 @@
         <el-table-column prop="media_name" label="内容名称" align="left"></el-table-column>
         <el-table-column prop="media_type" label="内容类型" align="left" :formatter="formaterText"></el-table-column>
         <el-table-column prop="cp_name" label="提供方名称" align="left"></el-table-column>
-        <el-table-column prop="validCount" sortable label="有效播放次数" align="left"></el-table-column>
-        <!--<el-table-column label="详情" align="center">
+        <el-table-column prop="play_count" sortable label="播放次数" align="left"></el-table-column>
+        <el-table-column label="详情" align="center">
           <template slot-scope="scope">
             <el-button type="primary"
                        size="mini"
@@ -89,7 +69,7 @@
                        @click="handleDetail(scope.$index, scope.row)">完整度
             </el-button>
           </template>
-        </el-table-column>-->
+        </el-table-column>
       </el-table>
       <el-col :span="24"> <!--分页条-->
         <el-pagination
@@ -113,14 +93,11 @@
   </section>
 </template>
 <script>
-import { loadPlayCount, loadCPs, loadMediaPer } from '../../api/api'
+import { loadAllPlayCount, loadMediaPer, exportAllPlayCountDtl } from '../../api/api'
 import echarts from 'echarts'
 export default {
   data () {
     return {
-      cps: '', // cp数据
-      contentType: '',
-      contentCP: '',
       contentKey: '',
       queryDate: [new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
       pickerOptions: { // 快捷键日期设置
@@ -147,21 +124,16 @@ export default {
       },
       chartLoading: false,
       tApp: '',
-      tPlayTimeList: [], // 表格数据
+      tAllPlayTimeList: [], // 表格数据
       typeMap: {
         1: '纯音乐',
         2: '视频音乐',
         3: '电影',
         4: '电视剧'
       },
-      typeMapArr: [{ id: 1, name: '纯音乐' }, { id: 2, name: '视频音乐' }, { id: 3, name: '电影' }, { id: 4, name: '电视剧' }],
       totalSize: 0, // 分页数据
       curpage: 1,
       pageSize: 15,
-      sumPlayCount: 0, // 总播放次数
-      avgCount: 0, // 人均次数
-      playTimePrecCP: [], // 扇形图 cp占比
-      playTimePrecTYPE: [], // 扇形图 内容类型占比
       playTimeTop: [], // 内容TOP数据
       dialogPerVisible: false,
       chooseMediaName: '', // 完整度 MediaName
@@ -309,12 +281,10 @@ export default {
         return false
       }
       this.chartLoading = true
-      loadPlayCount({
+      loadAllPlayCount({
         startDate: this.queryDate[0],
         endDate: this.queryDate[1],
         platFormId: this.tApp.id,
-        contentType: this.contentType,
-        contentCP: this.contentCP,
         contentKey: this.contentKey
       }).then(data => { // ?
         let { businessCode, resultSet } = data
@@ -332,173 +302,33 @@ export default {
             type: 'error'
           })
         } else {
-          this.tPlayTimeList = resultSet // 图表数据
-          if (this.tPlayTimeList.length === 0) {
+          this.tAllPlayTimeList = resultSet // 图表数据
+          if (this.tAllPlayTimeList.length === 0) {
             this.$notify.info({
               title: '警告',
-              message: '未加载到影片播放数据！',
+              message: '未加载到影片完整播放数据！',
               type: 'warning'
             })
           }
-          this.totalSize = this.tPlayTimeList.length
+          this.totalSize = this.tAllPlayTimeList.length
           this.curpage = 1
-          // 汇总数
-          this.sumPlayCount = 0
-          this.avgCount = 0
-          var cpMap = {} // cp 占比
-          var typeMap = {} // 内容类型占比
-          var sumCountMap = {} // mediaid sumplayCount
-          this.tPlayTimeList.forEach(item => {
-            var validCountNum = parseInt(item.validCount)
-            var mediaName = item.media_name
-            var cpName = item.cp_name
-            var typeName = item.media_type
-            this.sumPlayCount += validCountNum
-            this.avgCount += parseFloat(item.avgCount)
-            // cp 占比数据
-            if (cpMap[cpName] == null) {
-              cpMap[cpName] = 0
-            }
-            cpMap[cpName] += validCountNum
-            if (typeMap[typeName] == null) {
-              typeMap[typeName] = 0
-            }
-            typeMap[typeName] += validCountNum
-            if (sumCountMap[mediaName] == null) {
-              sumCountMap[mediaName] = 0
-            }
-            sumCountMap[mediaName] += validCountNum
-          })
-          // 平均次数
-          if (this.tPlayTimeList.length > 0) {
-            this.avgCount = (this.avgCount / this.tPlayTimeList.length)
-          }
-          this.drawPerCPChart(cpMap)
-          this.drawPerTypeChart(typeMap)
-          this.drawTOPChart(sumCountMap)
+          this.drawTOPChart()  //Top20
         }
       })
     },
-    drawPerCPChart: function (cpMap) {
-      this.playTimePrecCP = []
-      var legArr = []
-      for (var key in cpMap) {
-        if (key === 'null') { // null 值处理
-          legArr.push('其他')
-          this.playTimePrecCP.push({ 'name': '其他', 'value': cpMap[key] })
-        } else {
-          legArr.push(key)
-          this.playTimePrecCP.push({ 'name': key, 'value': cpMap[key] })
-        }
-      }
-      var option = { // 核心数据 数据展示
-        border: false,
-        legend: {
-          orient: 'vertical',
-          x: 'left',
-          top: 5,
-          left: 10,
-          data: legArr
-        },
-        grid: {
-          bottom: '5%',
-          containLabel: true
-        },
-        series: [
-          {
-            name: 'CP名称',
-            type: 'pie',
-            radius: '55%',
-            center: ['60%', '55%'],
-            itemStyle: {
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            },
-            data: this.playTimePrecCP
-          }
-        ], // 图
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b}: {c} ({d}%)'
-        }
-      }
-      var myChartCp = echarts.init(document.getElementById('playCountPre_CP'))
-      myChartCp.clear()
-      myChartCp.setOption(option)
-      window.onresize = myChartCp.resize // 适应图表
-    },
-    drawPerTypeChart: function (cpMap) {
-      this.playTimePrecTYPE = []
-      var legArr = []
-      for (var key in cpMap) {
-        if (key === 'null') { // null 值处理
-          legArr.push('其他')
-          this.playTimePrecTYPE.push({ 'name': '其他', 'value': cpMap[key] })
-        } else {
-          legArr.push(this.typeMap[key])
-          this.playTimePrecTYPE.push({ 'name': this.typeMap[key], 'value': cpMap[key] })
-        }
-      }
-      var option = { // 核心数据 数据展示
-        border: false,
-        legend: {
-          orient: 'vertical',
-          x: 'left',
-          top: 5,
-          left: 10,
-          data: legArr
-        },
-        grid: {
-          bottom: '5%',
-          containLabel: true
-        },
-        series: [
-          {
-            name: '内容类型',
-            type: 'pie',
-            radius: '55%',
-            center: ['50%', '55%'],
-            itemStyle: {
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            },
-            data: this.playTimePrecTYPE
-          }
-        ], // 图
-        color: ['#749F83', '#D48265', '#61A0A8'],
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b}: {c} ({d}%)'
-        }
-      }
-      var myChartType = echarts.init(document.getElementById('playCountPre_TYPE'))
-      myChartType.clear()
-      myChartType.setOption(option)
-      window.onresize = myChartType.resize // 适应图表
-    },
-    drawTOPChart: function (sumCountMap) {
-      this.playTimeTop = []
-      for (var key in sumCountMap) {
-        this.playTimeTop.push({ 'name': key, 'value': sumCountMap[key] })
-      }
-      this.playTimeTop.sort(this.Compare('value'))
-      this.playTimeTop = this.playTimeTop.length > 20 ? this.playTimeTop.slice(0, 20) : this.playTimeTop
+    drawTOPChart: function () {
+      var tPlayTimeTop = [...this.tAllPlayTimeList].sort(this.Compare('play_count'))
+      this.playTimeTop = tPlayTimeTop.length > 20 ? tPlayTimeTop.slice(0, 20) : []
       // 再次格式数据TOP20
       var dataX = []
       var dataSer = []
       this.playTimeTop.forEach(item => {
-        if (item.name === 'null') {
+        if (item.media_name === 'null') {
           dataX.push('其他')
         } else {
-          dataX.push(item.name)
+          dataX.push(item.media_name)
         }
-        dataSer.push(item.value)
+        dataSer.push(item.play_count)
       })
       var option = {
         color: ['#3398DB'],
@@ -556,7 +386,7 @@ export default {
           }
         ]
       }
-      var myChart = echarts.init(document.getElementById('playCountTop'))
+      var myChart = echarts.init(document.getElementById('allPlayCountTop'))
       myChart.clear()
       myChart.setOption(option)
       window.onresize = myChart.resize // 适应图表
@@ -576,44 +406,34 @@ export default {
     },
     // 导出excecl
     handleExport: function () {
-      if (this.tPlayTimeList.length === 0) {
+      if (this.tAllPlayTimeList.length === 0) {
         this.$message({
           message: '表格无数据，导出异常！',
           type: 'warning'
         })
         return false
       }
-      require.ensure([], () => {
-        const { exportExcel } = require('../../excel/Export2Excel')
-        const tHeader = ['日期', '内容ID', '内容名称', '内容类型', '提供方名称', '有效次数']
-        // 上面设置Excel的表格第一行的标题
-        const filterVal = ['day', 'media_id', 'media_name', 'media_type', 'cp_name', 'validCount']
-        // 上面的'day', 'hour', 'online_num'是tableData里对象的属性
-        const list = this.tPlayTimeList // 把data里的tableData存到list
-        const data = this.formatJson(filterVal, list)
-        exportExcel(tHeader, data, '有效次数excel')
-      })
-    },
-    formatJson (filterVal, jsonData) {
-      return jsonData.map(v => filterVal.map(j => v[j]))
-    },
-    getAllCPS () { // 加载 cp数据
-      loadCPs().then(data => { // ?
-        let { businessCode, resultSet } = data
-        if (businessCode !== 'success') {
-          this.$message({
-            message: 'CP数据加载失败，请联系管理员！',
-            type: 'error'
-          })
-        } else {
-          this.cps = resultSet // 图表数据
-        }
+      exportAllPlayCountDtl({
+        startDate: this.queryDate[0],
+        endDate: this.queryDate[1],
+        platFormId: this.tApp.id,
+        contentKey: this.contentKey
+      }).then(data => { // ?
+        let blob = new Blob([data], { type: 'application/vnd.ms-excel;charset=utf-8' });
+        let downloadElement = document.createElement('a');
+        let href = window.URL.createObjectURL(blob); //创建下载的链接
+        downloadElement.href = href;
+        downloadElement.download = `播放详情${this.moment(new Date()).format('YYYY/MM/DD')}.xlsx`; //下载后文件名
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); //点击下载
+        document.body.removeChild(downloadElement); //下载完成移除元素
+        window.URL.revokeObjectURL(href); //释放掉blob对象
+        loading.close()
       })
     }
   },
   created: function () {
     this.tApp = JSON.parse(sessionStorage.getItem('tApp'))
-    this.getAllCPS()
     this.getPlayCount()
   },
   mounted: function () {

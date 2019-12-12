@@ -86,7 +86,8 @@ export default new Router({
       name: '内容分析',
       iconCls: 'el-icon-s-data',
       children: [
-        { path: 'playCountAna', component: () => import('./views/contentRelChart/PlayCountAna.vue'), name: '有效播放次数统计', meta: { title: '播放次数统计', keepAlive: true } },
+        { path: 'allPlayCountAna', component: () => import('./views/contentRelChart/AllPlayCountAna.vue'), name: '播放次数统计', meta: { title: '完整播放次数统计', keepAlive: true } },
+        { path: 'playCountAna', component: () => import('./views/contentRelChart/PlayCountAna.vue'), name: '有效播放次数统计', meta: { title: '有效播放次数统计', keepAlive: true } },
         { path: 'contentProvider', component: () => import('./views/contentRelChart/ContentProviderTop.vue'), name: '内容提供商排行', meta: { title: '内容提供商排行', keepAlive: true } },
         { path: 'searchKeyTop', component: () => import('./views/contentRelChart/SearchKeyTop.vue'), name: '搜索关键字排行', meta: { title: '搜索关键字排行', keepAlive: true } },
         { path: 'collectTop', component: () => import('./views/contentRelChart/CollectTop.vue'), name: '收藏排行', meta: { title: '收藏排行', keepAlive: true } }
