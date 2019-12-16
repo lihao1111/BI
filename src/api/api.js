@@ -215,7 +215,7 @@ export const loadAllPlayCount = params => {
 
 // 内容完整播放次数导出数据
 export const exportAllPlayCountDtl = params => {
-  return axios.post(`${base}/exportAllPlayCount`, qs.stringify(params))
+  return axios.post(`${base}/exportAllPlayCount`, qs.stringify(params), { responseType: 'blob' })
     .then(res => res.data)
     .catch(function () { return { 'businessCode': 500 } })
 }

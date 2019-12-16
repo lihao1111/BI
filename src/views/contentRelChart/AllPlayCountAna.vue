@@ -99,7 +99,7 @@ export default {
   data () {
     return {
       contentKey: '',
-      queryDate: [new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
+      queryDate: [new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
       pickerOptions: { // 快捷键日期设置
         disabledDate (time) {
           return time.getTime() > Date.now()
@@ -413,6 +413,12 @@ export default {
         })
         return false
       }
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
       exportAllPlayCountDtl({
         startDate: this.queryDate[0],
         endDate: this.queryDate[1],
@@ -423,7 +429,7 @@ export default {
         let downloadElement = document.createElement('a');
         let href = window.URL.createObjectURL(blob); //创建下载的链接
         downloadElement.href = href;
-        downloadElement.download = `播放详情${this.moment(new Date()).format('YYYY/MM/DD')}.xlsx`; //下载后文件名
+        downloadElement.download = `playCount${this.moment(new Date()).format('YYYY/MM/DD')}.xlsx`; //下载后文件名
         document.body.appendChild(downloadElement);
         downloadElement.click(); //点击下载
         document.body.removeChild(downloadElement); //下载完成移除元素
