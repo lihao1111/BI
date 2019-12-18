@@ -77,6 +77,7 @@
       >
         <el-table-column prop="day" sortable label="日期" align="left"></el-table-column>
         <el-table-column prop="media_id" label="内容ID" align="left"></el-table-column>
+        <el-table-column prop="app_name" label="APP名称" align="left"></el-table-column>
         <el-table-column prop="media_name" label="内容名称" align="left"></el-table-column>
         <el-table-column prop="media_type" label="内容类型" align="left" :formatter="formaterText"></el-table-column>
         <el-table-column prop="cp_name" label="提供方名称" align="left"></el-table-column>
@@ -122,7 +123,7 @@ export default {
       contentType: '',
       contentCP: '',
       contentKey: '',
-      queryDate: [new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
+      queryDate: [new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000), new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000)],
       pickerOptions: { // 快捷键日期设置
         disabledDate (time) {
           return time.getTime() > Date.now()
@@ -539,7 +540,8 @@ export default {
           {
             name: '有效播放次数',
             type: 'bar',
-            barWidth: '60%',
+            barMinWidth: '60px',
+            barMaxWidth: '80px',
             data: dataSer,
             itemStyle: {
               normal: {

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-let base = '' // 生产环境配置  开发环境 使用代理转发 配置围 /api
+let base = '/api' // 生产环境配置  开发环境 使用代理转发 配置为 /api
 axios.defaults.timeout = 50000 // 响应时间
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8' // 请求头
 //  登录
@@ -90,7 +90,12 @@ export const loadCurPV = params => {
     .then(res => res.data)
     .catch(function () { return { 'businessCode': 500 } })
 }
-
+// 加载一段时间的UV汇总
+export const loadSumUV = params => {
+  return axios.post(`${base}/loadDayUV`, qs.stringify(params))
+    .then(res => res.data)
+    .catch(function () { return { 'businessCode': 500 } })
+}
 // 加载订购失败分析
 export const loadOrderFailAna = params => {
   return axios.post(`${base}/loadOrderFailAna`, qs.stringify(params))
