@@ -325,6 +325,9 @@ export default {
         startDate: this.queryDate[0],
         endDate: this.queryDate[1],
         platFormId: this.tApp.id,
+        contentType: this.contentType,
+        contentCP: this.contentCP,
+        contentKey: this.contentKey
       }).then((UVData) =>{
         let { businessCode, resultSet } = UVData
         this.sumUV = resultSet[0].UV
@@ -615,6 +618,8 @@ export default {
         startDate: this.queryDate[0],
         endDate: this.queryDate[1],
         platFormId: this.tApp.id,
+        contentType: this.contentType,
+        contentCP: this.contentCP,
         contentKey: this.contentKey
       }).then(data => { // ?
         let blob = new Blob([data], { type: 'application/vnd.ms-excel;charset=utf-8' });
