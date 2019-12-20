@@ -88,6 +88,7 @@ export default {
       chartLoading: false,
       tApp: '',
       tNewAddUserList: [], // 表格数据
+      charAddUserList: [], // 绘图数据
       dataLegStr: [], // 绘图数据_Leg
       dataX: [], // 绘图数据_X
       dataSer: [] // series数据
@@ -159,7 +160,28 @@ export default {
             type: 'error'
           })
         } else {
-          this.tNewAddUserList = resultSet // 表格数据
+          this.tNewAddUserList = [...resultSet] // 表格数据
+          let sumMap = {} // 合计项
+          sumMap.day = '合计'
+          sumMap.newAddNum = 0
+          sumMap.retained1Num = 0
+          sumMap.retained1Prec = 0.00
+          sumMap.retained3Num = 0
+          sumMap.retained7Num = 0
+          sumMap.retained30Num = 0
+          sumMap = this.tNewAddUserList.reduce((pre, cur) => {
+            sumMap.newAddNum = pre.newAddNum + cur.newAddNum
+            sumMap.retained1Num = pre.retained1Num + cur.retained1Num
+            sumMap.retained1Prec = pre.retained1Prec + cur.retained1Prec
+            sumMap.retained3Num = pre.retained3Num + cur.retained3Num
+            sumMap.retained7Num = pre.retained7Num + cur.retained7Num
+            sumMap.retained30Num = pre.retained30Num + cur.retained30Num
+            return sumMap
+          }, sumMap)
+          sumMap.retained1Prec = (sumMap.retained1Prec / (this.tNewAddUserList.length === 0 ? 1 : this.tNewAddUserList.length)).toFixed(2)
+          this.tNewAddUserList.push(sumMap)
+
+          this.charAddUserList = [...resultSet].reverse() // 图表数据
           // 绘图
           this.drawChartDatas()
         }
@@ -174,7 +196,7 @@ export default {
       var retain1Arr = []
       var retain3Arr = []
       var retain7Arr = []
-      var allDataArr = [...this.tNewAddUserList].reverse()
+      var allDataArr = this.charAddUserList
       for (let k in allDataArr) {
         this.dataX.push(allDataArr[k].day)
         newAddArr.push(allDataArr[k].newAddNum == null ? 0 : parseInt(allDataArr[k].newAddNum))

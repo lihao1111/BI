@@ -47,6 +47,7 @@
       >
         <el-table-column prop="day" sortable label="日期" align="center"></el-table-column>
         <el-table-column prop="uv" sortable label="UV" align="center"></el-table-column>
+        <el-table-column prop="pv" sortable label="PV" align="center"></el-table-column>
       </el-table>
     </div>
   </section>
@@ -159,7 +160,7 @@ export default {
             })
           } else if (this.chooseType === 'month') {
             this.activeUserList.forEach(item => {
-              item.day = this.moment(item.day).format('YYYY-MM')
+              item.day = this.moment(item.day).format('YYYY-MM') + '月'
             })
           }
           this.CoreChart(this.chooseType)
@@ -169,22 +170,36 @@ export default {
     CoreChart: function () {
       // 整理数据
       this.dataY = []
-      this.dataLegStr = ['UV']
+      this.dataLegStr = ['UV', 'PV']
       this.dataX = []
-      var loginCountArr = []
+      var uvCountArr = []
+      var pvCountArr = []
       for (let k in this.activeUserList) {
         this.dataX.push(this.activeUserList[k].day)
-        loginCountArr.push(this.activeUserList[k].uv)
+        uvCountArr.push(this.activeUserList[k].uv)
+        pvCountArr.push(this.activeUserList[k].pv)
       }
-      const map = {}
+      let map = {}
       map['name'] = 'UV'
       map['barWidth'] = 60
       map['type'] = 'bar'
+      map['stack'] = '总量'
       map['label'] = { 'normal': {
         'show': true
       } }
-      map['data'] = loginCountArr
+      map['data'] = uvCountArr
       this.dataY.push(map)
+      map = {}
+      map['name'] = 'PV'
+      map['barWidth'] = 60
+      map['type'] = 'bar'
+      map['stack'] = '总量'
+      map['label'] = { 'normal': {
+        'show': true
+      } }
+      map['data'] = pvCountArr
+      this.dataY.push(map)
+
       this.showCharts(this.dataLegStr, this.dataX, this.dataY)
     },
     showCharts: function (_dataLeg, _dataX, _dataY) {
