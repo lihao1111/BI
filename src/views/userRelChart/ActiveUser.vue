@@ -107,9 +107,9 @@ export default {
       }
       require.ensure([], () => {
         const { exportExcel } = require('../../excel/Export2Excel')
-        const tHeader = ['日期', 'uv']
+        const tHeader = ['日期', 'uv', 'pv']
         // 上面设置Excel的表格第一行的标题
-        const filterVal = ['day', 'uv']
+        const filterVal = ['day', 'uv', 'pv']
         const list = this.tActiveUserList // 把data里的tableData存到list
         const data = this.formatJson(filterVal, list)
         exportExcel(tHeader, data, '用户活跃excel')
@@ -152,8 +152,16 @@ export default {
             type: 'error'
           })
         } else {
-          this.tActiveUserList = resultSet // 表格数据
-          this.activeUserList = [...this.tActiveUserList].reverse() // 该方法会改变原来的数组，而不会创建新的数组
+          this.tActiveUserList = [...resultSet] // 表格数据
+          let sumMap = {} // 合计项
+          sumMap.day = '合计'
+          sumMap.pv = 0
+          this.tActiveUserList.reduce((pre, cur) => {
+            sumMap.pv = pre.pv + cur.pv
+            return sumMap
+          }, sumMap)
+          this.tActiveUserList.push(sumMap)
+          this.activeUserList = [...resultSet].reverse() // 该方法会改变原来的数组，而不会创建新的数组
           if (this.chooseType === 'week') {
             this.activeUserList.forEach(item => {
               item.day = this.moment(item.day).day(-6).format('YYYY-MM-DD') + '至' + item.day
