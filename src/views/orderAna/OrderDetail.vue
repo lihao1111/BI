@@ -230,7 +230,7 @@ export default {
           this.tOrderList.forEach(tItem => {
             this.allOrderNum += parseInt(tItem.ordered_num)
             this.allNewOrderNum += parseInt(tItem.newUordered_num)
-            this.allOldOrderNum += parseInt(tItem.oldNewReUordered_num)
+            this.allOldOrderNum += parseInt(tItem.oldNewReUordered_num) + parseInt(tItem.oldFirstUordered_num)
             this.allUnOrderNum += parseInt(tItem.unSubscribed_num)
 
             var existsItem = null
