@@ -21,11 +21,11 @@
         <el-form-item>
           <el-button type="primary " size="small" icon="el-icon-search" v-on:click="getOrderDetail">查询</el-button>
         </el-form-item>
-        <!--<el-radio-group v-model="chooseType" size="small" @change="chooseTypeVal" style="float: right; margin-top: 5px; margin-right: 10px">
+        <el-radio-group v-model="chooseType" size="small" @change="chooseTypeVal" style="float: right; margin-top: 5px; margin-right: 10px">
           <el-radio-button label="day">日</el-radio-button>
           <el-radio-button label="week">周</el-radio-button>
           <el-radio-button label="month">月</el-radio-button>
-        </el-radio-group>-->
+        </el-radio-group>
       </el-form>
     </el-col>
     <el-col :span="6" style="padding-top: 20px;padding-right: 20px">
@@ -89,11 +89,11 @@
         <!--<el-table-column prop="product_id" label="产品ID" align="center"></el-table-column>-->
         <el-table-column prop="product_name" label="产品名称" align="center"></el-table-column>
         <el-table-column prop="ordered_num" label="总订购" align="center"></el-table-column>
-        <!--<el-table-column prop="orderPerc" label="订购率" align="center">
+        <el-table-column prop="orderPerc" label="订购率" align="center">
           <template slot-scope="scope">
             <span style="color: #1d8ce0; font-weight: bold">{{ scope.row.orderPerc == null ? '' : scope.row.orderPerc+'%' }}</span>
           </template>
-        </el-table-column>-->
+        </el-table-column>
         <el-table-column prop="newUordered_num" label="新用户订购" align="center"></el-table-column>
         <el-table-column prop="oldFirstUordered_num" label="老用户首次订购" align="center"></el-table-column>
         <el-table-column prop="oldNewReUordered_num" label="老用户再次订购" align="center"></el-table-column>
@@ -164,9 +164,9 @@ export default {
       }
       require.ensure([], () => {
         const { exportExcel } = require('../../excel/Export2Excel')
-        const tHeader = ['日期', '产品ID', '产品名称', '总订购', '新用户订购', '老用户首次订购', '老用户再次订购', '退订发起']
+        const tHeader = ['日期', '产品名称', '总订购', '订购率(%)', '新用户订购', '老用户首次订购', '老用户再次订购', '退订发起']
         // 上面设置Excel的表格第一行的标题
-        const filterVal = ['day', 'product_id', 'product_name', 'ordered_num', 'newUordered_num', 'oldFirstUordered_num', 'oldNewReUordered_num', 'unSubscribed_num']
+        const filterVal = ['day', 'product_name', 'ordered_num', 'orderPerc', 'newUordered_num', 'oldFirstUordered_num', 'oldNewReUordered_num', 'unSubscribed_num']
         // 上面的'day', 'hour', 'online_num'是tableData里对象的属性
         const list = this.tOrderList // 把data里的tableData存到list
         const data = this.formatJson(filterVal, list)
@@ -220,14 +220,22 @@ export default {
           })
         } else {
           // 表格数据
-          this.tOrderList = resultSet // 表格数据
+          this.tOrderList = [...resultSet] // 表格数据
+          if (this.tOrderList.length === 0) {
+            this.$message({
+              message: '未查询到相关的UV数据，请重置条件！',
+              type: 'warning'
+            })
+          }
           // 整理图表数据
           this.orderList = []
           this.allOrderNum = 0
           this.allNewOrderNum = 0
           this.allOldOrderNum = 0
           this.allUnOrderNum = 0
-          this.tOrderList.forEach(tItem => {
+          this.tOrderList.filter(item => {
+            return (item.product_name !== '合计')
+          }).forEach(tItem => {
             this.allOrderNum += parseInt(tItem.ordered_num)
             this.allNewOrderNum += parseInt(tItem.newUordered_num)
             this.allOldOrderNum += parseInt(tItem.oldNewReUordered_num) + parseInt(tItem.oldFirstUordered_num)
