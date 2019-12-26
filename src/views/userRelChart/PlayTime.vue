@@ -21,6 +21,11 @@
           <el-form-item>
             <el-button type="primary " size="small" icon="el-icon-search" v-on:click="getPlayTime">查询</el-button>
           </el-form-item>
+          <el-radio-group v-model="chooseType" size="small" @change="chooseTypeVal" style="float: right; margin-top: 5px; margin-right: 10px">
+            <el-radio-button label="day">日</el-radio-button>
+            <el-radio-button label="week">周</el-radio-button>
+            <el-radio-button label="month">月</el-radio-button>
+          </el-radio-group>
         </el-form>
       </el-col>
       <el-col :span="24">
@@ -91,12 +96,17 @@ export default {
       playTimeList: [], // 请求数据this
       tPlayTimeList: [],
       dataX: [], // x轴数据
-      dataLegStr: [] // 绘图数据_Leg
+      dataLegStr: [], // 绘图数据_Leg
+      chooseType: '' // 选择 日周月
     }
   },
   methods: {
     valFormatter: function (row, column, cellValue) {
       return cellValue + '分钟'
+    },
+    chooseTypeVal (val) { // 日周月
+      this.chooseType = val
+      this.getPlayTime()
     },
     getPlayTime: function () {
       if (!this.queryDate) {
@@ -125,7 +135,12 @@ export default {
         return false
       }
       this.chartLoading = true
-      loadPlayTime({ startDate: this.queryDate[0], endDate: this.queryDate[1], platFormId: this.tApp.id }).then(data => { // ?
+      loadPlayTime({
+        startDate: this.queryDate[0],
+        endDate: this.queryDate[1],
+        platFormId: this.tApp.id,
+        chooseType: this.chooseType
+      }).then(data => { // ?
         let { businessCode, resultSet } = data
         this.chartLoading = false
         if (businessCode === 'unauthenticated') { // 有权限认证
@@ -144,12 +159,17 @@ export default {
           this.tPlayTimeList = resultSet // 图表数据
           this.playTimeList = [...this.tPlayTimeList].reverse() // 反转日期
           if (this.playTimeList == null || this.playTimeList.length === 0) {
+            var chooseTypeStr = '天'
+            if (this.chooseType === 'week') {
+              chooseTypeStr = '周'
+            } else if (this.chooseType === 'month') {
+              chooseTypeStr = '月'
+            }
             this.$notify.info({
               title: '警告',
-              message: '未加载到用户播放数据！',
+              message: '未加载到[' + chooseTypeStr + ']用户播放数据！',
               type: 'warning'
             })
-            return false
           }
           this.drawPlayTimeChart()
         }
@@ -288,10 +308,11 @@ export default {
     },
     formatJson (filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => v[j]))
-    },
+    }
   },
   created: function () {
     this.tApp = JSON.parse(sessionStorage.getItem('tApp'))
+    this.chooseType = 'day' // 默认为日
     this.getPlayTime()
   },
   mounted: function () {
