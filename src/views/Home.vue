@@ -201,6 +201,26 @@ export default {
           value: 'SC.CMCC.Children',
           label: '少儿平台'
         }]
+      }, {
+        value: 'FJ.CMCC',
+        label: '福建移动',
+        children: [{
+          value: 'FJ.CMCC.All',
+          label: '所有平台'
+        }, {
+          value: 'FJ.CMCC.Edu',
+          label: '教育平台'
+        }]
+      },{
+        value: 'CQ.CMCC',
+        label: '重庆移动',
+        children: [{
+          value: 'CQ.CMCC.All',
+          label: '所有平台'
+        }, {
+          value: 'CQ.CMCC.Children',
+          label: '少儿平台'
+        }]
       }],
       tApp: '', //  当前产品视图
       myFormVisible: false, // dialog显隐
