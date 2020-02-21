@@ -48,6 +48,7 @@
       >
         <el-table-column prop="day" label="日期" align="center" :formatter="formaterText"></el-table-column>
         <el-table-column prop="uv" sortable label="订购页到达数" align="center"></el-table-column>
+        <el-table-column prop="pv" sortable label="订购页到达次数" align="center"></el-table-column>
       </el-table>
     </div>
   </section>
@@ -112,9 +113,9 @@ export default {
       }
       require.ensure([], () => {
         const { exportExcel } = require('../../excel/Export2Excel')
-        const tHeader = ['日期', '订购页到达数']
+        const tHeader = ['日期', '订购页到达数(UV)', '订购页到达次数(PV)']
         // 上面设置Excel的表格第一行的标题
-        const filterVal = ['day', 'uv']
+        const filterVal = ['day', 'uv', 'pv']
         // 上面的'day', 'hour', 'online_num'是tableData里对象的属性
         const list = this.orderEnterList // 把data里的tableData存到list
         const data = this.formatJson(filterVal, list)
