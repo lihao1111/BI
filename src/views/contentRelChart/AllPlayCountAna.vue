@@ -64,6 +64,9 @@
     <div style="padding: 0px 10px;">
       <el-col :span="24" style=" margin-top: 10px; height: 40px; line-height: 40px; background-color: rgba(17, 146, 175, 0.18);">
         <span style="padding:10px; color: #606266;">详细数据<i class="el-icon-info"></i></span>
+        <el-link type="primary" :underline="false" style="float: right; margin-right: 30px; font-weight: bold" icon="el-icon-download" @click="handleMediaExport">
+          按节目合并导出数据
+        </el-link>
         <el-link type="primary" :underline="false" style="float: right; margin-right: 10px; font-weight: bold" icon="el-icon-download" @click="handleExport">
           导出数据
         </el-link>
@@ -113,7 +116,7 @@
   </section>
 </template>
 <script>
-import { loadAllPlayCount, loadMediaPer, exportAllPlayCountDtl, loadCPs, loadSumUV } from '../../api/api'
+import { loadAllPlayCount, loadMediaPer, exportAllPlayCountDtl, loadCPs, loadSumUV, loadMediaExport } from '../../api/api'
 import echarts from 'echarts'
 export default {
   data () {
@@ -172,6 +175,40 @@ export default {
     perDialgOpen () { // 初始 per div 对象
       this.$nextTick(() => {
         this.myChartPer = document.getElementById('playCountPer')
+      })
+    },
+    handleMediaExport(){
+      if (!this.queryDate) {
+        this.$message({
+          showClose: true,
+          message: '请选择查询日期范围！',
+          type: 'error'
+        })
+        return false
+      }
+      if (this.queryDate[1] < this.queryDate[0]) {
+        this.$message({
+          showClose: true,
+          message: '结束日期必须大于开始日期！',
+          type: 'error'
+        })
+        return false
+      }
+      loadMediaExport({
+        startDate: this.queryDate[0],
+        endDate: this.queryDate[1],
+        platFormId: this.tApp.id
+      }).then(data => { // ?
+        let blob = new Blob([data], { type: 'application/vnd.ms-excel;charset=utf-8' });
+        let downloadElement = document.createElement('a');
+        let href = window.URL.createObjectURL(blob); //创建下载的链接
+        downloadElement.href = href;
+        downloadElement.download = `playCountSum${this.moment(new Date()).format('YYYY/MM/DD')}.xlsx`; //下载后文件名
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); //点击下载
+        document.body.removeChild(downloadElement); //下载完成移除元素
+        window.URL.revokeObjectURL(href); //释放掉blob对象
+        loading.close()
       })
     },
     handleDetail ($index, row) {
